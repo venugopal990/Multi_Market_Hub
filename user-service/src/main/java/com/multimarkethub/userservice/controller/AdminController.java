@@ -1,0 +1,88 @@
+package com.multimarkethub.userservice.controller;
+
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import com.multimarkethub.userservice.beans.Admin;
+import com.multimarkethub.userservice.beans.Response;
+import com.multimarkethub.userservice.services.AdminService;
+
+import jakarta.validation.Valid;
+
+@RestController
+public class AdminController {
+	
+	
+	private final AdminService adminServices;
+	
+	@Autowired
+	public AdminController(AdminService adminServices) {
+		this.adminServices = adminServices;
+	}
+	
+	
+	@PostMapping("/admins")
+	public ResponseEntity<Admin> createAdmin(@Valid @RequestBody(required = true) Admin admin) {
+		Admin adminResult = adminServices.createAdmin(admin);
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+						.path("/{id}")
+						.buildAndExpand(adminResult.getId())
+						.toUri();
+		return ResponseEntity.created(location).build();
+	}
+	
+	@GetMapping("/admins")
+	public List<Admin> getAdmins() {
+		
+		return adminServices.getAdmins(null);
+	}
+	
+	@GetMapping("/admins/{id}")
+	public List<Admin> getAdmins(@PathVariable Integer id) {
+		return adminServices.getAdmins(id);
+	}
+	
+	
+	@PutMapping("/admins/{adminId}/store/{storeId}")
+	public void updateStoreId(@PathVariable Integer adminId, @PathVariable Integer storeId) {
+		adminServices.updateStoreId(storeId, adminId);
+	}
+	
+	
+	@PutMapping("/admins")
+	public Admin updateAdmin(@Valid @RequestBody Admin admin) {
+		return adminServices.updateAdmin(admin);
+	}
+	
+	@DeleteMapping("/admins/{id}")
+	public String deleteById(@PathVariable(required = true) Integer id) {
+		return adminServices.deleteAdminById(id);
+	}
+	
+	@PostMapping("/admins/login")
+	public ResponseEntity<Response> authenticateAdmin(@RequestParam(name = "email",required = true) String email,
+			@RequestParam(name = "password",required = true)  String password) {
+		if(Boolean.TRUE.equals(adminServices.authenticateAdmin(email, password))) {
+			return ResponseEntity.ok(new Response(LocalDateTime.now(),true, "Login successful",""));
+		}else {
+			return ResponseEntity.status(401).body(new Response(LocalDateTime.now(),false, "Login failed. Invalid credentials",""));
+		}
+	}
+	
+	
+	
+
+}

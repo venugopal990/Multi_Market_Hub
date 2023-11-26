@@ -31,9 +31,6 @@ jobs:
     - name: Build api-gateway
       run: mvn -B package --file api-gateway/pom.xml
 
-    - name: Build multi-market-hub
-      run: mvn -B package --file multi-market-hub/pom.xml
-
     - name: Build multi-market-hub-config-server
       run: mvn -B package --file multi-market-hub-config-server/pom.xml
 

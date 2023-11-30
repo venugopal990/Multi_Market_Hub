@@ -14,7 +14,6 @@
 	<name>user-service</name>
 	<description>User Service Micro Services Project </description>
 	<properties>
-		<configuration-PullPolicy>IF_NOT_PRESENT</configuration-PullPolicy>
 		<java.version>17</java.version>
 		<spring-cloud.version>2022.0.4</spring-cloud.version>
 	</properties>

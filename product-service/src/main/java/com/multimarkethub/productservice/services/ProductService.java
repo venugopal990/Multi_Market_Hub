@@ -9,14 +9,14 @@ import jakarta.validation.Valid;
 
 public interface ProductService {
 
-	public void createProduct(ProductRequest productRequest);
+	public void createProduct(Integer storeId, ProductRequest productRequest);
 
-	public List<ProductReponse> getProducts(Integer productId);
+	public List<ProductReponse> getProducts(Integer storeId, Integer productId);
 
 	public List<ProductReponse> getByProductsCategoryIdAndStoreId(Integer storeId, Integer categoryId);
 
-	public String deleteProductById(Integer productId);
+	public String deleteProductById(Integer storeId, Integer productId);
 
-	public ProductReponse updateProduct(Integer productId, @Valid ProductRequest productRequest);
+	public ProductReponse updateProduct(Integer storeId, Integer productId, @Valid ProductRequest productRequest);
 
 }

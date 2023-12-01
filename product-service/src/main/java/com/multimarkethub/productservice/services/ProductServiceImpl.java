@@ -36,38 +36,38 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public void createProduct(ProductRequest productRequest) {
+	public void createProduct(Integer storeId , ProductRequest productRequest) {
 		
 		
-		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(productRequest.getStoreId()))) {
-			Integer categoryId = categoryService.getCategoryByName(productRequest.getStoreId(), productRequest.getCategoryName());
+		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(storeId))) {
+			Integer categoryId = categoryService.getCategoryByName(storeId, productRequest.getCategoryName());
 			if(categoryId==0) {
-				categoryId = categoryService.createCategory(productRequest.getStoreId(), productRequest.getCategoryName());
+				categoryId = categoryService.createCategory(storeId, productRequest.getCategoryName());
 			}
 			
 			Timestamp timeStamp = productsRepository.findCurrentTimeStamp();
 			
 			ProductsEntity productsEntity = new ProductsEntity(productRequest.getProductName(), productRequest.getProductDescription(), productRequest.getProductPrice(), 
-					productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(), productRequest.getStoreId(),productRequest.getProductImageUrl(), timeStamp, timeStamp);
+					productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(), storeId,productRequest.getProductImageUrl(), timeStamp, timeStamp);
 			productsRepository.save(productsEntity);
 		}
 		
 	}
 
 	@Override
-	public List<ProductReponse> getProducts(Integer productId) {
+	public List<ProductReponse> getProducts(Integer storeId, Integer productId) {
 		List<ProductsEntity> productsEntityList = new ArrayList<>() ;
 		if(productId == null) {
-			productsEntityList = productsRepository.findAll();
+			productsEntityList = productsRepository.findAllByStoreId(storeId);
 			if(productsEntityList.isEmpty()) {
 				throw new NotFoundException("No products found. The requested operation cannot be completed.");
 			}
 		}else {
-			Optional<ProductsEntity> productsEntityOptional = productsRepository.findById(productId);
-			if(productsEntityOptional.isEmpty()) {
+			ProductsEntity productsEntity = productsRepository.findByProductIdAndStoreId(productId, storeId);
+			if(productsEntity == null) {
 				throw new NotFoundException("Product with ID " + productId + " not found.");
 			}else {
-				productsEntityList.add(productsEntityOptional.get());
+				productsEntityList.add(productsEntity);
 			}
 		}
 		return mapToProductReponse(productsEntityList);
@@ -95,9 +95,9 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public String deleteProductById(Integer productId) {
-		if(productsRepository.existsById(productId)) {
-			productsRepository.deleteById(productId);
+	public String deleteProductById(Integer storeId, Integer productId) {
+		if(productsRepository.findByProductIdAndStoreId(productId, storeId) != null) {
+			productsRepository.deleteByProductIdAndStoreId(productId, storeId);
 		}else {
 			throw new NotFoundException("product with ID " + productId + " not found.");
 		}
@@ -105,19 +105,19 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public ProductReponse updateProduct(Integer productId, @Valid ProductRequest productRequest) {
-		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(productRequest.getStoreId()))) {
-			Integer categoryId = categoryService.getCategoryByName(productRequest.getStoreId(), productRequest.getCategoryName());
+	public ProductReponse updateProduct(Integer storeId, Integer productId, @Valid ProductRequest productRequest) {
+		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(storeId))) {
+			Integer categoryId = categoryService.getCategoryByName(storeId, productRequest.getCategoryName());
 			if(categoryId==0) {
-				categoryId = categoryService.createCategory(productRequest.getStoreId(), productRequest.getCategoryName());
+				categoryId = categoryService.createCategory(storeId, productRequest.getCategoryName());
 			}
 						
 			productsRepository.updateProduct(productId, productRequest.getProductName(), productRequest.getProductDescription(), productRequest.getProductPrice(), 
 					productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(),productRequest.getProductImageUrl());
 		}else {
-			throw new NotFoundException("store with ID " + productRequest.getStoreId() + " not found.");
+			throw new NotFoundException("store with ID " + storeId + " not found.");
 		}
-		return getProducts(productId).get(0);
+		return getProducts(storeId,productId).get(0);
 	}
 
 }

@@ -19,6 +19,15 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Intege
 
 
 	List<ProductsEntity> findByStoreIdAndCategoryId(Integer storeId, Integer categoryId);
+	
+	ProductsEntity findByProductIdAndStoreId(Integer productId, Integer storeId);
+	
+	List<ProductsEntity> findAllByStoreId(Integer storeId);
+	
+	@Modifying(clearAutomatically = true)
+	@Transactional
+    @Query("DELETE FROM ProductsEntity p WHERE p.productId = :productId AND p.storeId = :storeId")
+    void deleteByProductIdAndStoreId(Integer productId, Integer storeId);
 
 
 	@Modifying(clearAutomatically = true)

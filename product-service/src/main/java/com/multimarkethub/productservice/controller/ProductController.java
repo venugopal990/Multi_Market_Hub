@@ -31,21 +31,21 @@ public class ProductController {
 	}
 	
 	
-	@PostMapping("/products")
+	@PostMapping("/stores/{storeId}/products")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public void createProduct(@Valid @RequestBody(required = true)ProductRequest productRequest) {
-		productService.createProduct(productRequest);
+	public void createProduct(@PathVariable Integer storeId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
+		productService.createProduct(storeId, productRequest);
 	}
 	
 	
-	@GetMapping("/products")
-	public List<ProductReponse> getProducts() {
-		return productService.getProducts(null);
+	@GetMapping("/stores/{storeId}/products")
+	public List<ProductReponse> getProducts(@PathVariable Integer storeId) {
+		return productService.getProducts(storeId, null);
 	}
 	
-	@GetMapping("/products/{productId}")
-	public List<ProductReponse> getProducts(@PathVariable Integer productId) {
-		return productService.getProducts(productId);
+	@GetMapping("/stores/{storeId}/products/{productId}")
+	public List<ProductReponse> getProducts(@PathVariable Integer storeId, @PathVariable Integer productId) {
+		return productService.getProducts(storeId, productId);
 	}
 	
 	@GetMapping("/stores/{storeId}/categories/{categoryId}/products")
@@ -54,14 +54,14 @@ public class ProductController {
 	}
 	
 	
-	@PutMapping("/products/{productId}")
-	public ProductReponse updateProduct(@PathVariable(required = true) Integer productId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
-		return productService.updateProduct(productId,productRequest);
+	@PutMapping("/stores/{storeId}/products/{productId}")
+	public ProductReponse updateProduct(@PathVariable Integer storeId, @PathVariable(required = true) Integer productId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
+		return productService.updateProduct(storeId,productId,productRequest);
 	}
 	
-	@DeleteMapping("/products/{productId}")
-	public String deleteProductById(@PathVariable(required = true) Integer productId) {
-		return productService.deleteProductById(productId);
+	@DeleteMapping("/stores/{storeId}/products/{productId}")
+	public String deleteProductById(@PathVariable Integer storeId,  @PathVariable(required = true) Integer productId) {
+		return productService.deleteProductById(storeId,productId);
 	}
 
 }

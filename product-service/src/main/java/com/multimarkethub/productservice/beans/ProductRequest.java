@@ -23,10 +23,6 @@ public class ProductRequest {
 	@NotNull
 	private Integer unitId;
 
-    @NotNull
-	private Integer storeId;
-
-	
 	private String productImageUrl;
 
 	public String getProductName() {
@@ -75,14 +71,6 @@ public class ProductRequest {
 
 	public void setUnitId(Integer unitId) {
 		this.unitId = unitId;
-	}
-
-	public Integer getStoreId() {
-		return storeId;
-	}
-
-	public void setStoreId(Integer storeId) {
-		this.storeId = storeId;
 	}
 
 	public String getProductImageUrl() {

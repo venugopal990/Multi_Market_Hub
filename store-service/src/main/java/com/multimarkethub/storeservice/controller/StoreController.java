@@ -48,5 +48,11 @@ public class StoreController {
     public List<Store> getStore(@PathVariable(required = true) Integer storeId) {
     	return storeService.getStores(storeId);
     }
+    
+    
+    @GetMapping("/storesById/{storeId}")
+    public Boolean getStoreById(@PathVariable(required = true) Integer storeId) {
+    	return !storeService.getStores(storeId).isEmpty();
+    }
 
 }

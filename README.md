@@ -51,6 +51,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **POST /admins** - creates a new users (admin) 
 - **PUT /admins/{id}** - updates an existing users by ID 
 - **DELETE /admins/{id}** - deletes a users by ID 
+- **POST /admins/login?email=test@gmail.com&password=test123** - Sign in using your email address and password.
 
 
 ## Stores API's (STORE-SERVICE)

@@ -126,12 +126,17 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Boolean authenticateAdmin(String email, String password) {
+	public Admin authenticateAdmin(String email, String password) {
 		
 		Optional<AdminEntity> adminEntityOptional =  adminsRepository.findAdminByEmail(email);
 		if(!adminEntityOptional.isEmpty()) {
+			System.out.println("admin found");
 			AdminEntity adminEntity= adminEntityOptional.get();
-			return passwordService.authenticateUser(password, adminEntity.getAdminPassword());
+			if(passwordService.authenticateUser(password, adminEntity.getAdminPassword())) {
+				return covertAdminEntityToAdmin(adminEntity);
+			}else {
+				return null;
+			}
 		}else {
 			throw new NotFoundException("No admin found with the email address: " + email);
 		}

@@ -17,7 +17,7 @@ public interface AdminService {
 
 	public void updateStoreId(Integer storeId, Integer adminId);
 
-	public Boolean authenticateAdmin(String email, String password);
+	public Admin authenticateAdmin(String email, String password);
 	
 
 }

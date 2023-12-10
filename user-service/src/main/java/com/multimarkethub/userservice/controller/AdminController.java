@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -35,13 +37,9 @@ public class AdminController {
 	
 	
 	@PostMapping("/admins")
-	public ResponseEntity<Admin> createAdmin(@Valid @RequestBody(required = true) Admin admin) {
-		Admin adminResult = adminServices.createAdmin(admin);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-						.path("/{id}")
-						.buildAndExpand(adminResult.getId())
-						.toUri();
-		return ResponseEntity.created(location).build();
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public Admin createAdmin(@Valid @RequestBody(required = true) Admin admin) {
+		return adminServices.createAdmin(admin);
 	}
 	
 	@GetMapping("/admins")
@@ -75,8 +73,9 @@ public class AdminController {
 	@PostMapping("/admins/login")
 	public ResponseEntity<Response> authenticateAdmin(@RequestParam(name = "email",required = true) String email,
 			@RequestParam(name = "password",required = true)  String password) {
-		if(Boolean.TRUE.equals(adminServices.authenticateAdmin(email, password))) {
-			return ResponseEntity.ok(new Response(LocalDateTime.now(),true, "Login successful",""));
+		Admin admin = adminServices.authenticateAdmin(email, password);
+		if(admin !=null) {
+			return ResponseEntity.ok(new Response(LocalDateTime.now(),true, "Login successful","{\"storeId\":"+admin.getStoreId()+",\"userId\":"+admin.getId()+"}"));
 		}else {
 			return ResponseEntity.status(401).body(new Response(LocalDateTime.now(),false, "Login failed. Invalid credentials",""));
 		}

@@ -62,12 +62,14 @@ MultiMarketHub can be deployed in various environments, and the following techno
 
 
 ## Products API's (PRODUCT-SERVICE)
-- **GET /units** - get all the units
 - **POST /stores/{storeId}/products** - creates a new products
 - **GET /stores/{storeId}/products**  - retrieves a list of all products
 - **GET /stores/{storeId}/products/{id}** - retrieves a specific products by ID
 - **PUT /stores/{storeId}/products/{id}** - updates an existing products by ID
 - **DELETE /stores/{storeId}/products/{id}** - deletes a products by ID
+- **GET  /stores/{storeId}/products/search/{productName}**  - Search by Product Name
+
+- **GET /units** - get all the units
 - **GET /stores/{storeId}/categories** - retrieves list of all categories
 - **GET /stores/{storeId}/categories/{CategoryId}/products** - retrieves products by categories and store Id
 

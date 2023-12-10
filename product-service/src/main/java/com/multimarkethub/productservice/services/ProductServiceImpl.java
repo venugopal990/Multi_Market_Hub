@@ -120,4 +120,14 @@ public class ProductServiceImpl implements ProductService{
 		return getProducts(storeId,productId).get(0);
 	}
 
+	@Override
+	public List<ProductReponse> searchProducts(Integer storeId,String productName) {
+		List<ProductsEntity> productsEntityList = productsRepository.findByProductNameAndStoreIdILike(productName, storeId);
+		if(productsEntityList.isEmpty()) {
+			throw new NotFoundException("No products found. The requested operation cannot be completed.");
+		}else {
+			return mapToProductReponse(productsEntityList);
+		}
+	}
+
 }

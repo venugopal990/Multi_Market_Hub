@@ -48,6 +48,11 @@ public class ProductController {
 		return productService.getProducts(storeId, productId);
 	}
 	
+	@GetMapping("/stores/{storeId}/products/search/{productName}")
+	public List<ProductReponse> searchProducts(@PathVariable Integer storeId,@PathVariable String productName) {
+		return productService.searchProducts(storeId, productName);
+	}
+	
 	@GetMapping("/stores/{storeId}/categories/{categoryId}/products")
 	public List<ProductReponse> getByProductsCategoryIdAndStoreId(@PathVariable Integer storeId,@PathVariable Integer categoryId) {
 		return productService.getByProductsCategoryIdAndStoreId(storeId,categoryId);

@@ -16,6 +16,10 @@ public interface ProductsRepository extends JpaRepository<ProductsEntity, Intege
 
 	@Query(value="select current_timestamp",nativeQuery=true)
 	Timestamp findCurrentTimeStamp();
+	
+	
+	@Query("SELECT p FROM ProductsEntity  p WHERE LOWER(p.productName) like LOWER(CONCAT('%', :productName, '%'))  AND p.storeId = :storeId")
+    List<ProductsEntity> findByProductNameAndStoreIdILike(String productName, Integer storeId);
 
 
 	List<ProductsEntity> findByStoreIdAndCategoryId(Integer storeId, Integer categoryId);

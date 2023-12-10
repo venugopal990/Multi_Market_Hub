@@ -19,4 +19,6 @@ public interface ProductService {
 
 	public ProductReponse updateProduct(Integer storeId, Integer productId, @Valid ProductRequest productRequest);
 
+	public List<ProductReponse> searchProducts(Integer storeId,String productName);
+
 }

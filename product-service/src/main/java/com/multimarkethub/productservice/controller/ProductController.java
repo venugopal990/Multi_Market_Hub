@@ -4,18 +4,23 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.multimarkethub.productservice.beans.ProductReponse;
 import com.multimarkethub.productservice.beans.ProductRequest;
+import com.multimarkethub.productservice.services.ImageService;
 import com.multimarkethub.productservice.services.ProductService;
+import com.multimarkethub.productservice.utils.Utils;
 
 import jakarta.validation.Valid;
 
@@ -25,9 +30,12 @@ public class ProductController {
 	
 	private final ProductService productService;
 	
+    private final  ImageService imageService;
+	
 	@Autowired
-	public ProductController(ProductService productService) {
+	public ProductController(ProductService productService,ImageService imageService) {
 		this.productService = productService;
+		this.imageService = imageService; 
 	}
 	
 	
@@ -68,5 +76,24 @@ public class ProductController {
 	public String deleteProductById(@PathVariable Integer storeId,  @PathVariable(required = true) Integer productId) {
 		return productService.deleteProductById(storeId,productId);
 	}
+	
+	
+	@PostMapping("/products/images/upload")
+    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+        try {
+        	if(!file.isEmpty()) {
+        		if (Utils.isImage(file)) {
+        			String imageUrl = imageService.uploadImage(file);
+        			return new ResponseEntity<>(imageUrl, HttpStatus.OK);
+        		}else {
+                    return new ResponseEntity<>("Invalid file format. Only image files are allowed.", HttpStatus.BAD_REQUEST);
+        		}
+        	}else {
+                return new ResponseEntity<>("No File Attached ", HttpStatus.NOT_FOUND);
+        	}
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to upload image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
 }

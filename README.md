@@ -69,7 +69,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **PUT /stores/{storeId}/products/{id}** - updates an existing products by ID
 - **DELETE /stores/{storeId}/products/{id}** - deletes a products by ID
 - **GET  /stores/{storeId}/products/search/{productName}**  - Search by Product Name
-
+- **POST /products/images/upload** - Upload Product Images
 - **GET /units** - get all the units
 - **GET /stores/{storeId}/categories** - retrieves list of all categories
 - **GET /stores/{storeId}/categories/{CategoryId}/products** - retrieves products by categories and store Id

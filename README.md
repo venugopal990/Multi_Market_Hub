@@ -60,6 +60,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **POST /stores**  - creates a new stores 
 - **PUT /stores/{Id}**  - updates an existing stores by ID
 - **DELETE /stores/{Id}**  - deletes a stores by ID
+- **GET /storeName/{resourceName}** -- retrieves a specific stores by resourceName 
 
 
 ## Products API's (PRODUCT-SERVICE)

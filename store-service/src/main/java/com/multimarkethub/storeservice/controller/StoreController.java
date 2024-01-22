@@ -1,17 +1,14 @@
 package com.multimarkethub.storeservice.controller;
 
-import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.multimarkethub.storeservice.beans.Store;
 import com.multimarkethub.storeservice.services.StoreService;
@@ -30,13 +27,14 @@ public class StoreController {
 	}
 
     @PostMapping("/stores")
-    public ResponseEntity<Store> createStore(@Valid @RequestBody Store store){
-    	Store storeResult = storeService.createStore(store);
-		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-						.path("/{id}")
-						.buildAndExpand(storeResult.getId())
-						.toUri();
-		return ResponseEntity.created(location).build();
+    public Store createStore(@Valid @RequestBody Store store){
+    	return storeService.createStore(store);
+    }
+    
+    
+    @GetMapping("/storeName/{resourceName}")
+    public Store getStore(@PathVariable(required = true) String resourceName) {
+    	return storeService.getStoresDetailsByResourceName(resourceName);
     }
     
     @GetMapping("/stores")

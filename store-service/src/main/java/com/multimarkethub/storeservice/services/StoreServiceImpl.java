@@ -133,6 +133,23 @@ public class StoreServiceImpl implements StoreService{
         return randomNumericSuffix.toString();
     }
 
+
+
+
+	@Override
+	public Store getStoresDetailsByResourceName(String resourceName) {
+		List<StoreEntity> storeEntityList ;
+		if(resourceName != null) {
+			storeEntityList = storesRepository.findByStoreDomain(resourceName);
+			if(storeEntityList.isEmpty()) {
+				throw new NotFoundException("No details found for the specified store name: "+resourceName);
+			}else {
+				return covertStoreEntityListToStoreList(storeEntityList).get(0);
+			}
+		}
+		return null;
+	}
+
 	
 
 }

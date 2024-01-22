@@ -16,4 +16,6 @@ public interface StoreService {
 
 	public Store updateStore(Store admin) throws NotFoundException;
 
+	public Store getStoresDetailsByResourceName(String resourceName);
+
 }

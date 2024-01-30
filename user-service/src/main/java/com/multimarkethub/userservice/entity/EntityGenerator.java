@@ -32,7 +32,7 @@ public class EntityGenerator {
 	}
 
 	public static void main(String[] args) throws Exception {
-		listOfTables = "\'stores\'";
+		listOfTables = "\'cartitems\'";
 		EntityGenerator entityGenerator = new EntityGenerator();
 //		entityGenerator.getTablesList();
 		entityGenerator.createEntityFiles(listOfTables);

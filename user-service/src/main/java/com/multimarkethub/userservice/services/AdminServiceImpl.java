@@ -9,39 +9,40 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multimarkethub.userservice.beans.Admin;
+import com.multimarkethub.userservice.beans.UserDetails;
 import com.multimarkethub.userservice.entity.AdminEntity;
 import com.multimarkethub.userservice.exception.NotFoundException;
 import com.multimarkethub.userservice.repository.AdminsRepository;
 
 @Service
-public class AdminServiceImpl implements AdminService {
+public class AdminServiceImpl implements UserService {
 	
 	private final AdminsRepository adminsRepository;
     private final PasswordService passwordService;
 
-    @Autowired
+	@Autowired
     public AdminServiceImpl(AdminsRepository adminsRepository, PasswordService passwordService) {
         this.adminsRepository = adminsRepository;
         this.passwordService = passwordService;
     }
 
 	@Override
-	public Admin createAdmin(Admin admin) { 
-		if(adminsRepository.countAdminByEmail(admin.getEmail())== 0) {
-			AdminEntity  adminEntity = covertAdminToAdminEntity(admin);
+	public Admin createUser(Object admin) { 
+		if(adminsRepository.countAdminByEmail(((Admin)admin).getEmail())== 0) {
+			AdminEntity  adminEntity = covertAdminToAdminEntity((Admin)admin);
 			Timestamp timeStamp = adminsRepository.findCurrentTimeStamp();
 			adminEntity.setAdminCreatedAt(timeStamp);
 			adminEntity.setAdminUpdatedAt(timeStamp);
 			adminEntity.setAdminEmailVerified(false);
-			adminEntity.setAdminPassword(passwordService.gethashedPassword(admin.getPassword()));
+			adminEntity.setAdminPassword(passwordService.gethashedPassword(((Admin)admin).getPassword()));
 			return covertAdminEntityToAdmin(adminsRepository.save(adminEntity));
 		}else {
-			throw new IllegalArgumentException("The email address " + admin.getEmail() + " is already associated with an existing admin.");
+			throw new IllegalArgumentException("The email address " + ((Admin)admin).getEmail() + " is already associated with an existing admin.");
 		}
 	}
 	
 	@Override
-	public List<Admin> getAdmins(Integer id) throws NotFoundException  {
+	public List<Admin> getUsers(Integer id) throws NotFoundException  {
 		List<AdminEntity> adminEntityList = new ArrayList<>() ;
 		if(id == null) {
 			adminEntityList = adminsRepository.findAll();
@@ -61,7 +62,7 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public String deleteAdminById(Integer id) {
+	public String deleteUserById(Integer id) {
 		if(adminsRepository.existsById(id)) {
 			adminsRepository.deleteById(id);
 		}else {
@@ -71,13 +72,13 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin updateAdmin(Admin admin) throws NotFoundException {
-		if(adminsRepository.existsById(admin.getId())) {
-			adminsRepository.updateAdminDetails(admin.getId(), admin.getFirstName(), admin.getLastName(), admin.getAddress(), admin.getPhoneNumber(), 
+	public Admin updateUser(Object admin) throws NotFoundException {
+		if(adminsRepository.existsById(((Admin)admin).getId())) {
+			adminsRepository.updateAdminDetails(((Admin)admin).getId(), ((Admin)admin).getFirstName(), ((Admin)admin).getLastName(), ((Admin)admin).getAddress(), ((Admin)admin).getPhoneNumber(), 
 					adminsRepository.findCurrentTimeStamp());
-			return covertAdminEntityToAdmin(adminsRepository.findById(admin.getId()).get());
+			return covertAdminEntityToAdmin(adminsRepository.findById(((Admin)admin).getId()).get());
 		}else {
-			throw new NotFoundException("Admin with ID " + admin.getId() + " not found.");
+			throw new NotFoundException("Admin with ID " + ((Admin)admin).getId() + " not found.");
 		}
 	}
 	
@@ -94,7 +95,7 @@ public class AdminServiceImpl implements AdminService {
 	
 	
 	public  List<AdminEntity> covertAdminListToAdminEntityList(List<Admin> adminList) {
-		List<AdminEntity> adminEntityList =  new ArrayList<AdminEntity>();
+		List<AdminEntity> adminEntityList =  new ArrayList<>();
 		for(Admin admin : adminList) {
 			adminEntityList.add(covertAdminToAdminEntity(admin));
 		}
@@ -110,7 +111,7 @@ public class AdminServiceImpl implements AdminService {
 	
 	
 	public List<Admin> covertAdminEntityListToAdminList(List<AdminEntity> adminEntityList) {
-		ArrayList<Admin> adminList =  new ArrayList<Admin>();
+		ArrayList<Admin> adminList =  new ArrayList<>();
 		for(AdminEntity adminEntity : adminEntityList) {
 			adminList.add(covertAdminEntityToAdmin(adminEntity));
 		}
@@ -126,11 +127,10 @@ public class AdminServiceImpl implements AdminService {
 	}
 
 	@Override
-	public Admin authenticateAdmin(String email, String password) {
+	public Admin authenticateUser(String email, String password) {
 		
 		Optional<AdminEntity> adminEntityOptional =  adminsRepository.findAdminByEmail(email);
 		if(!adminEntityOptional.isEmpty()) {
-			System.out.println("admin found");
 			AdminEntity adminEntity= adminEntityOptional.get();
 			if(passwordService.authenticateUser(password, adminEntity.getAdminPassword())) {
 				return covertAdminEntityToAdmin(adminEntity);

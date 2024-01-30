@@ -15,12 +15,4 @@ public class Admin extends UserDetails{
 		return super.toString();
 	}
 	
-	
-	
-	
-	
-	
-
-
-	
 }

@@ -17,24 +17,6 @@ import jakarta.transaction.Transactional;
 
 public interface AdminsRepository extends JpaRepository<AdminEntity, Integer>{
 	
-	/*@PersistenceContext
-	private EntityManager entityManager;
-	
-	public AdminEntity insert(AdminEntity adminEntity) {
-		return entityManager.merge(adminEntity);
-	}
-	
-	public AdminEntity findById(long id) {
-		return entityManager.find(AdminEntity.class, id);
-	}
-	
-	public void deleteById(long id) {
-		AdminEntity adminEntity= entityManager.find(AdminEntity.class, id);
-		 entityManager.remove(adminEntity);
-	}*/
-	
-	
-	//Optional<AdminEntity> findByEmail(String adminEmail);
 	
 	@Query(value = "SELECT * FROM Admins WHERE admin_email = :email", nativeQuery = true)
 	Optional<AdminEntity> findAdminByEmail(

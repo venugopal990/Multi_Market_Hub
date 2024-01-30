@@ -164,10 +164,6 @@ public class AdminEntity {
 	public void setAdminUpdatedAt(Timestamp adminUpdatedAt) {
 		this.adminUpdatedAt = adminUpdatedAt;
 	}
-
-
-
-	
 	
 	public AdminEntity(Integer adminId, String adminFirstName, String adminLastName, String adminEmail,
 			String adminPassword, String adminAddress, String adminPhoneNumber, Integer storeId) {

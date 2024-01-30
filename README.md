@@ -83,3 +83,12 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **POST /customers?storeId=?** - creates a new users (customer) based on store id
 - **PUT /customers/{id}** - updates an existing users by ID
 - **DELETE /customers/{id}** - deletes a users by ID
+
+
+## Order API's (ORDER-SERVICE)
+
+- **POST /cartItems** - Add the products to the cart
+- **GET /cartItems?storeId=&customerId=** - Get the products to the cart
+- **DELETE /cartItems/{productId}?storeId=&customerId=** - Get the products to the cart
+
+

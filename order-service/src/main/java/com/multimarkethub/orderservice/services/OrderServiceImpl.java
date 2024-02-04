@@ -41,18 +41,31 @@ public class OrderServiceImpl implements OrderService {
 		this.paymentService = paymentService;
 		this.productServiceProxy =  productServiceProxy;
 	}
+	
+	private Boolean isProductsInStock(List<CartitemsEntity> cartitemsEntityList) {
+		for(CartitemsEntity cartitemsEntity: cartitemsEntityList) {
+			if(cartitemsEntity.getQuantity()>cartitemsEntity.getProductsEntity().getProductStockQuantity()) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 	@Override
 	public CheckOutResponse cartCheckOut(Integer storeId, Integer customerId, PaymentType paymentType) {
 		CartsEntity cartsEntity = cartService.getByCustomerIdAndStoreId(customerId,storeId);
 		if(cartsEntity==null)
 			throw new NotFoundException("No products found in the cart.");
-		Double cartTotalAmount = CartServiceImpl.getTotalPriceOfTheCart(cartsEntity.getCartItems());
-		Integer orderId = saveOrders(cartsEntity,cartTotalAmount);
-		paymentService.savePayments(orderId, storeId, cartTotalAmount, paymentType);
-		updateProductStock(storeId, cartsEntity.getCartItems());
-		cartService.removeItemFromCart(storeId, customerId, 0);
-		return new CheckOutResponse(orderId, "Success", "Thank you for ordering!");
+		if(Boolean.TRUE.equals(isProductsInStock(cartsEntity.getCartItems()))) {
+			Double cartTotalAmount = CartServiceImpl.getTotalPriceOfTheCart(cartsEntity.getCartItems());
+			Integer orderId = saveOrders(cartsEntity,cartTotalAmount);
+			paymentService.savePayments(orderId, storeId, cartTotalAmount, paymentType);
+			updateProductStock(storeId, cartsEntity.getCartItems());
+			cartService.removeItemFromCart(storeId, customerId, 0);
+			return new CheckOutResponse(orderId, "Success", "Thank you for ordering!");
+		}else {
+			throw new NotFoundException("Product OutOfStock.");
+		}
 	}
 	
 	private void updateProductStock(Integer storeId,List<CartitemsEntity> cartitemsEntityList) {

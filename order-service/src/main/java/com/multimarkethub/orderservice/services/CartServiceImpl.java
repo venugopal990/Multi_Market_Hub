@@ -37,23 +37,15 @@ public class CartServiceImpl implements CartService{
 	public AddToCartResponse addItemToCart(AddToCartRequest addToCartRequest) {
 		
 		List<ProductReponse> productReponseList = productServiceProxy.getProducts(addToCartRequest.getStoreId(), addToCartRequest.getProductId());
-		System.out.println("productReponseList SIZE::"+productReponseList.size());
 		if(!productReponseList.isEmpty()) {
 			ProductReponse productReponse= productReponseList.get(0);
-			System.out.println("productReponseList stock::"+productReponse.getProductStockQuantity());
 			if(addToCartRequest.getQuantity()<=productReponse.getProductStockQuantity()) {
-				System.out.println("productReponseList greater::");
 				Integer cartId ;
 				CartsEntity cartsEntity = getByCustomerIdAndStoreId(addToCartRequest.getCustomerId(),addToCartRequest.getStoreId());
-				System.out.println("48");
-
 				if(cartsEntity!=null) {
-					System.out.println("cartsEntity not null");
 					cartId = cartsEntity.getCartId();
 				}else {
-					System.out.println("cartsEntity null");
 					cartId = saveToCart(addToCartRequest);   
-					System.out.println("cartsEntity cartId:"+cartId);
 				}
 				CartitemsEntity cartitemsEntity = cartitemsRepository.findByProductIdAndCartId(addToCartRequest.getProductId(),cartId);
 				Double unitPrice= calcluateProductPrice(addToCartRequest.getQuantity(), productReponse.getProductPrice());

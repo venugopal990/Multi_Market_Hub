@@ -5,11 +5,16 @@ import java.sql.Timestamp;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.multimarkethub.orderservice.utils.JsonTimestampSerializer;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -23,7 +28,7 @@ public class CartitemsEntity {
 	@Column(name="cart_item_id")
 	private Integer cartItemId;
 
-	@Column(name="cart_id")
+	@Column(name = "cart_id")
 	private Integer cartId;
 
 	@Column(name="product_id")
@@ -42,6 +47,15 @@ public class CartitemsEntity {
 	@JsonSerialize(using = JsonTimestampSerializer.class)
 	@Column(name="cart_item_updated_at")
 	private Timestamp cartItemUpdatedAt;
+	
+    @OneToOne
+    @JoinColumn(name = "product_id", referencedColumnName = "product_id", insertable = false, updatable = false)
+	private ProductsEntity productsEntity;
+	
+	
+    @ManyToOne
+    @JoinColumn(name="cart_id", insertable = false, updatable = false)
+    private CartsEntity cart;
 
 	public Integer getCartItemId() {
 		return cartItemId;
@@ -99,6 +113,16 @@ public class CartitemsEntity {
 		this.cartItemUpdatedAt = cartItemUpdatedAt;
 	}
 
+
+
+	public CartsEntity getCart() {
+		return cart;
+	}
+
+	public void setCart(CartsEntity cart) {
+		this.cart = cart;
+	}
+
 	public CartitemsEntity(Integer cartId, Integer productId, Integer quantity, Double unitPrice,
 			Timestamp cartItemCreatedAt, Timestamp cartItemUpdatedAt) {
 		super();
@@ -111,6 +135,21 @@ public class CartitemsEntity {
 	}
 
 	public CartitemsEntity() {
+	}
+
+	@Override
+	public String toString() {
+		return "CartitemsEntity [cartItemId=" + cartItemId + ", cartId=" + cartId + ", productId=" + productId
+				+ ", quantity=" + quantity + ", unitPrice=" + unitPrice + ", cartItemCreatedAt=" + cartItemCreatedAt
+				+ ", cartItemUpdatedAt=" + cartItemUpdatedAt + ", cartsentity=" + cart + "]";
+	}
+
+	public ProductsEntity getProductsEntity() {
+		return productsEntity;
+	}
+
+	public void setProductsEntity(ProductsEntity productsEntity) {
+		this.productsEntity = productsEntity;
 	}
 	
 	

@@ -23,6 +23,7 @@ public class EntityGenerator {
 	 */
 	public EntityGenerator() {
 		try {
+			System.out.println("started");
 			Class.forName("org.postgresql.Driver");
 			con = DriverManager.getConnection("jdbc:postgresql://localhost:5432/multi-market-hub-database", "postgres", "M@rketH#bSh0p!2023");
 			stmt = con.createStatement();
@@ -32,7 +33,7 @@ public class EntityGenerator {
 	}
 
 	public static void main(String[] args) throws Exception {
-		listOfTables = "\'cartitems\'";
+		listOfTables = "\'deliverystatuses\'";
 		EntityGenerator entityGenerator = new EntityGenerator();
 //		entityGenerator.getTablesList();
 		entityGenerator.createEntityFiles(listOfTables);

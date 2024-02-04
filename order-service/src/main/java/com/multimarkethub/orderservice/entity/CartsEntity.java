@@ -1,20 +1,21 @@
 package com.multimarkethub.orderservice.entity;
 
 import java.sql.Timestamp;
-
-import java.sql.Date;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.SequenceGenerator;
+import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.multimarkethub.orderservice.utils.JsonTimestampSerializer;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "carts")
@@ -39,6 +40,12 @@ public class CartsEntity {
 	@JsonSerialize(using = JsonTimestampSerializer.class)
 	@Column(name="cart_updated_at")
 	private Timestamp cartUpdatedAt;
+	
+	
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<CartitemsEntity> cartItems;
+
+	
 
 	public Integer getCartId() {
 		return cartId;
@@ -89,5 +96,23 @@ public class CartsEntity {
 	}
 
 	public CartsEntity() {
+	}
+
+
+
+
+	public List<CartitemsEntity> getCartItems() {
+		return cartItems;
+	}
+
+	public void setCartItems(List<CartitemsEntity> cartItems) {
+		this.cartItems = cartItems;
+	}
+
+	@Override
+	public String toString() {
+		return "CartsEntity [cartId=" + cartId + ", customerId=" + customerId + ", storeId=" + storeId
+				+ ", cartCreatedAt=" + cartCreatedAt + ", cartUpdatedAt=" + cartUpdatedAt + ", cartitemsEntities="
+				+ cartItems.toString() + "]";
 	}
 }

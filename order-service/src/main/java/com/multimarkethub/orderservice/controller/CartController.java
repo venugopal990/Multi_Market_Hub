@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.multimarkethub.orderservice.beans.AddToCartResponse;
 import com.multimarkethub.orderservice.beans.Cart;
-import com.multimarkethub.orderservice.beans.CartPrice;
 import com.multimarkethub.orderservice.beans.AddToCartRequest;
 import com.multimarkethub.orderservice.services.CartService;
 
@@ -38,7 +37,7 @@ public class CartController {
 	}
 
 	@DeleteMapping("/cartItems/{productId}")
-	public CartPrice removeItemFromCart(@RequestParam Integer storeId, @RequestParam Integer customerId, @PathVariable("productId") Integer productId) {
+	public AddToCartResponse removeItemFromCart(@RequestParam Integer storeId, @RequestParam Integer customerId, @PathVariable("productId") Integer productId) {
 		return addToCartService.removeItemFromCart(storeId,customerId,productId);
 	}
 }

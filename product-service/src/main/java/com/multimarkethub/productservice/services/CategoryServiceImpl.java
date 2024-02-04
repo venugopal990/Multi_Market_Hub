@@ -37,7 +37,6 @@ public class CategoryServiceImpl implements CategoryService{
 	public Integer getCategoryByName(Integer storeId, String categoryName) {
 		List<CategoriesEntity> categoriesEntityList = categoryRepository.findByStoreIdAndCategoryName(storeId, Utils.capitalizeEachWord(categoryName));
 		if(categoriesEntityList.isEmpty()) {
-			//throw new NotFoundException("No category found with the name "+categoryName);
 			return 0;
 		}else {
 			return categoriesEntityList.get(0).getCategoryId();
@@ -52,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService{
 		if(categoriesEntityOptional.isEmpty()) {
 			throw new NotFoundException("No category found with the Id: "+categoryId); 
 		}else{
-			return new Category(categoryId, categoriesEntityOptional.get().getCategoryName());
+			return new Category(categoryId, categoriesEntityOptional.get().getCategoryName(),categoriesEntityOptional.get().getProductsEntities().size());
 		}
 	}
 
@@ -71,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService{
 		List<Category> categoriesList = new ArrayList<Category>();
 		
 		for(CategoriesEntity categoriesEntity:categoriesEntityList) {
-			categoriesList.add(new Category(categoriesEntity.getCategoryId(), categoriesEntity.getCategoryName()));
+			categoriesList.add(new Category(categoriesEntity.getCategoryId(), categoriesEntity.getCategoryName(),categoriesEntity.getProductsEntities().size()));
 		}
 		
 		return categoriesList;

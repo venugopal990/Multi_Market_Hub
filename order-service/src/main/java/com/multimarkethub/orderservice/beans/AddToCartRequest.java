@@ -2,7 +2,7 @@ package com.multimarkethub.orderservice.beans;
 
 import java.sql.Timestamp;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public class AddToCartRequest {
@@ -14,7 +14,8 @@ public class AddToCartRequest {
 	private Integer storeId;
 	@NotNull
 	private Integer productId;
-	@NotNull
+	@NotNull 
+	@Min(value = 0, message = "Quantity must be a non-negative number")
 	private Integer quantity;	
 	private Timestamp createdDate;
 	private Timestamp updatedDate;

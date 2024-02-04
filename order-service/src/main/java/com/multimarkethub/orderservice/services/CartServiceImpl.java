@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.multimarkethub.orderservice.beans.AddToCartResponse;
 import com.multimarkethub.orderservice.beans.Cart;
-import com.multimarkethub.orderservice.beans.CartPrice;
 import com.multimarkethub.orderservice.beans.AddToCartRequest;
 import com.multimarkethub.orderservice.beans.ProductReponse;
 import com.multimarkethub.orderservice.entity.CartitemsEntity;
@@ -38,26 +37,34 @@ public class CartServiceImpl implements CartService{
 	public AddToCartResponse addItemToCart(AddToCartRequest addToCartRequest) {
 		
 		List<ProductReponse> productReponseList = productServiceProxy.getProducts(addToCartRequest.getStoreId(), addToCartRequest.getProductId());
+		System.out.println("productReponseList SIZE::"+productReponseList.size());
 		if(!productReponseList.isEmpty()) {
 			ProductReponse productReponse= productReponseList.get(0);
+			System.out.println("productReponseList stock::"+productReponse.getProductStockQuantity());
 			if(addToCartRequest.getQuantity()<=productReponse.getProductStockQuantity()) {
+				System.out.println("productReponseList greater::");
 				Integer cartId ;
-				CartsEntity cartsEntity = cartRepository.findByCustomerIdAndStoreId(addToCartRequest.getCustomerId(),addToCartRequest.getStoreId());
-				Double unitPrice= calcluateProductPrice(addToCartRequest.getQuantity(), productReponse.getProductPrice());
+				CartsEntity cartsEntity = getByCustomerIdAndStoreId(addToCartRequest.getCustomerId(),addToCartRequest.getStoreId());
+				System.out.println("48");
+
 				if(cartsEntity!=null) {
+					System.out.println("cartsEntity not null");
 					cartId = cartsEntity.getCartId();
 				}else {
-					cartId = saveToCart(addToCartRequest);       
+					System.out.println("cartsEntity null");
+					cartId = saveToCart(addToCartRequest);   
+					System.out.println("cartsEntity cartId:"+cartId);
 				}
 				CartitemsEntity cartitemsEntity = cartitemsRepository.findByProductIdAndCartId(addToCartRequest.getProductId(),cartId);
+				Double unitPrice= calcluateProductPrice(addToCartRequest.getQuantity(), productReponse.getProductPrice());
 				if(cartitemsEntity!=null) {
 					cartitemsRepository.updateCartItems(addToCartRequest.getQuantity(), unitPrice, cartitemsEntity.getCartItemId());
 				}else {
 					saveToCartItems(cartId, unitPrice, addToCartRequest);
 				}
-				cartitemsRepository.findByCartId(cartId);
 				List<CartitemsEntity> cartitemsEntityList = cartitemsRepository.findByCartId(cartId);
-				return new AddToCartResponse(cartId, unitPrice, getTotalPriceOfTheCart(cartitemsEntityList)); 
+				return new AddToCartResponse(cartId,addToCartRequest.getProductId(),addToCartRequest.getQuantity(), unitPrice, getTotalPriceOfTheCart(cartitemsEntityList),
+						cartitemsEntityList.size(),productReponse.getProductStockQuantity()); 
 			}else {
 				throw new NotFoundException("OutOfStock Exception");
 			}
@@ -67,16 +74,17 @@ public class CartServiceImpl implements CartService{
 		}
 	}
 	
-	private Double getTotalPriceOfTheCart(List<CartitemsEntity> cartitemsEntityList) {
+	protected static Double getTotalPriceOfTheCart(List<CartitemsEntity> cartitemsEntityList) {
 		Double totalPrice = 0.0;
 		for (CartitemsEntity cartitemsEntity : cartitemsEntityList) {
 			totalPrice += cartitemsEntity.getUnitPrice();
 		}
-		return totalPrice;
+		return Double.parseDouble(String.format("%.2f", totalPrice));
 	}
 	
 	private Double calcluateProductPrice(Integer quantity, Double price) {
-		return price*quantity;
+		double totalPrice = price * quantity;
+	    return Double.parseDouble(String.format("%.2f", totalPrice));
 	}
 	
 	private void saveToCartItems(Integer cartId, Double unitPrice,  AddToCartRequest cart) {
@@ -100,10 +108,10 @@ public class CartServiceImpl implements CartService{
 
 	@Override
 	public Cart getItemsFromCart(Integer storeId, Integer customerId) {
-		CartsEntity cartsEntity = cartRepository.findByCustomerIdAndStoreId(customerId,storeId);
+		CartsEntity cartsEntity = getByCustomerIdAndStoreId(customerId,storeId);
 		if(cartsEntity!=null) {
 			List<ProductReponse> productReponseList = new ArrayList<>();
-			List<CartitemsEntity> cartitemsEntityList = cartitemsRepository.findByCartId(cartsEntity.getCartId());
+			List<CartitemsEntity> cartitemsEntityList = cartsEntity.getCartItems();
 			for (CartitemsEntity cartitemsEntity : cartitemsEntityList) {
 				List<ProductReponse> productReponseListFromProxy = productServiceProxy.getProducts(storeId, cartitemsEntity.getProductId());
 				ProductReponse productReponse = productReponseListFromProxy.get(0);
@@ -112,7 +120,6 @@ public class CartServiceImpl implements CartService{
 				productReponseList.add(productReponse);
 			}
 			return new Cart(cartitemsEntityList.size(), getTotalPriceOfTheCart(cartitemsEntityList), productReponseList);
-			
 		}else {
 			throw new NotFoundException("No products found in the cart.");
 		}
@@ -121,20 +128,36 @@ public class CartServiceImpl implements CartService{
 
 
 	@Override
-	public CartPrice removeItemFromCart(Integer storeId, Integer customerId, Integer productId) {
-		CartsEntity cartsEntity = cartRepository.findByCustomerIdAndStoreId(customerId,storeId);
+	public AddToCartResponse removeItemFromCart(Integer storeId, Integer customerId, Integer productId) {
+		CartsEntity cartsEntity = getByCustomerIdAndStoreId(customerId,storeId);
 		if(cartsEntity!=null) {
 			Integer cartId = cartsEntity.getCartId();
-			cartitemsRepository.deleteByCartIdAndProductId(cartId, productId);
+			if(productId == 0) {
+				cartitemsRepository.deleteByCartId(cartId);
+			}else {
+				cartitemsRepository.deleteByCartIdAndProductId(cartId, productId);
+			}
 			List<CartitemsEntity> cartitemsList = cartitemsRepository.findByCartId(cartId);
 			if(cartitemsRepository.findByCartId(cartId).isEmpty()) {
 				cartRepository.deleteByStoreIdAndCustomerId(storeId, customerId);
 			}
-			return new CartPrice(getTotalPriceOfTheCart(cartitemsList));
+			return new AddToCartResponse(cartId,productId,0, 0.0, getTotalPriceOfTheCart(cartitemsList),
+					cartitemsList.size(),0); 
 		}else {
 			throw new NotFoundException("No products found in the cart.");
 		}
+		
+	}
+
+	@Override
+	public CartsEntity getByCustomerIdAndStoreId(Integer customerId, Integer storeId) {
+		CartsEntity cartsEntity = cartRepository.findByCustomerIdAndStoreId(customerId,storeId);
+		if(cartsEntity!=null) {
+			return cartsEntity;
+		}else {
+			return null;
+		}
 	}
 	
-
+	
 }

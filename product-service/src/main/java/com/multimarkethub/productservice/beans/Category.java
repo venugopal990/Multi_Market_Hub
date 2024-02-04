@@ -1,12 +1,12 @@
 package com.multimarkethub.productservice.beans;
 
-import java.util.List;
-
 public class Category {
 	
 	private Integer categoryId;
 
 	private String categoryName;
+	
+	private Integer productCount;
 	
 
 	public Integer getCategoryId() {
@@ -26,11 +26,22 @@ public class Category {
 	}
 
 
-	public Category(Integer categoryId, String categoryName) {
+	public Integer getProductCount() {
+		return productCount;
+	}
+
+	public void setProductCount(Integer productCount) {
+		this.productCount = productCount;
+	}
+
+	public Category(Integer categoryId, String categoryName, Integer productCount) {
 		super();
 		this.categoryId = categoryId;
 		this.categoryName = categoryName;
+		this.productCount = productCount;
 	}
+
+	
 	
 	
 

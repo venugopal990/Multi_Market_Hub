@@ -48,9 +48,15 @@ public class CustomerController {
 		return (List<Customer>) customerServices.getUsers(null);
 	}
 
+	/**
+	 * TODO Add StoreId in the condition
+	 * @param id
+	 * @param storeId
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers/{id}")
-	public List<Customer> getAdmins(@PathVariable Integer id,@RequestParam(required = true) Integer storeId) {
+	public List<Customer> getCustomers(@PathVariable Integer id,@RequestParam(required = true) Integer storeId) {
 		return (List<Customer>) customerServices.getUsers(id);
 	}
 

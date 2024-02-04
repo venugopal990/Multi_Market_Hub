@@ -21,4 +21,6 @@ public interface ProductService {
 
 	public List<ProductReponse> searchProducts(Integer storeId,String productName);
 
+	public void updateProductStock(Integer storeId, Integer productId, Integer stockQuantity);
+
 }

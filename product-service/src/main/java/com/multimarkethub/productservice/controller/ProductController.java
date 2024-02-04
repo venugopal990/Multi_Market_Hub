@@ -66,9 +66,15 @@ public class ProductController {
 		return productService.getByProductsCategoryIdAndStoreId(storeId,categoryId);
 	}
 	
+	@PostMapping("/stores/{storeId}/updateProductStock/{productId}")
+	public void updateProductStock(@PathVariable(required = true) Integer storeId, @PathVariable(required = true) Integer productId, 
+			@RequestParam(required = true) Integer stockQuantity) {
+		 productService.updateProductStock(storeId,productId,stockQuantity);
+	}
+	
 	
 	@PutMapping("/stores/{storeId}/products/{productId}")
-	public ProductReponse updateProduct(@PathVariable Integer storeId, @PathVariable(required = true) Integer productId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
+	public ProductReponse updateProduct(@PathVariable(required = true) Integer storeId, @PathVariable(required = true) Integer productId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
 		return productService.updateProduct(storeId,productId,productRequest);
 	}
 	
@@ -79,21 +85,25 @@ public class ProductController {
 	
 	
 	@PostMapping("/products/images/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
-        try {
-        	if(!file.isEmpty()) {
-        		if (Utils.isImage(file)) {
-        			String imageUrl = imageService.uploadImage(file);
-        			return new ResponseEntity<>(imageUrl, HttpStatus.OK);
-        		}else {
-                    return new ResponseEntity<>("Invalid file format. Only image files are allowed.", HttpStatus.BAD_REQUEST);
-        		}
-        	}else {
-                return new ResponseEntity<>("No File Attached ", HttpStatus.NOT_FOUND);
-        	}
-        } catch (Exception e) {
-            return new ResponseEntity<>("Failed to upload image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+	public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
+		try {
+			if(!file.isEmpty()) {
+				if (file.getSize() <= 200 * 1024) {  // Checking file size, 200 KB limit
+					if (Utils.isImage(file)) {
+						String imageUrl = imageService.uploadImage(file);
+						return new ResponseEntity<>(imageUrl, HttpStatus.OK);
+					}else {
+						return new ResponseEntity<>("Invalid file format. Only image files are allowed.", HttpStatus.BAD_REQUEST);
+					}
+				} else {
+					return new ResponseEntity<>("File size exceeds the limit of 200 KB.", HttpStatus.BAD_REQUEST);
+				}
+			}else {
+				return new ResponseEntity<>("No File Attached ", HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<>("Failed to upload image: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 }

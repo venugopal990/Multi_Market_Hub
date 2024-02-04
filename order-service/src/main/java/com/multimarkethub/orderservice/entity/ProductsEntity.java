@@ -1,19 +1,19 @@
-package com.multimarkethub.productservice.entity;
+package com.multimarkethub.orderservice.entity;
 
 import java.sql.Timestamp;
 
-import jakarta.persistence.CascadeType;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.multimarkethub.orderservice.utils.JsonTimestampSerializer;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.multimarkethub.productservice.utils.JsonTimestampSerializer;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "products")
@@ -56,10 +56,6 @@ public class ProductsEntity {
 	@JsonSerialize(using = JsonTimestampSerializer.class)
 	@Column(name="product_updated_at")
 	private Timestamp productUpdatedAt;
-	
-	@ManyToOne
-	@JoinColumn(name = "category_id", insertable = false, updatable = false)
-	private CategoriesEntity categories;
 	
 
 	public Integer getProductId() {
@@ -150,13 +146,6 @@ public class ProductsEntity {
 		this.productUpdatedAt = productUpdatedAt;
 	}
 
-	public CategoriesEntity getCategories() {
-		return categories;
-	}
-
-	public void setCategories(CategoriesEntity categories) {
-		this.categories = categories;
-	}
 
 	public ProductsEntity(String productName, String productDescription, Double productPrice,
 			Integer productStockQuantity, Integer categoryId, Integer unitId, Integer storeId, String productImageUrl,

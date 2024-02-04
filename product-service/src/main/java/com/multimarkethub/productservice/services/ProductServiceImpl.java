@@ -113,7 +113,7 @@ public class ProductServiceImpl implements ProductService{
 			}
 						
 			productsRepository.updateProduct(productId, productRequest.getProductName(), productRequest.getProductDescription(), productRequest.getProductPrice(), 
-					productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(),productRequest.getProductImageUrl());
+					productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(),productRequest.getProductImageUrl(),storeId);
 		}else {
 			throw new NotFoundException("store with ID " + storeId + " not found.");
 		}
@@ -128,6 +128,16 @@ public class ProductServiceImpl implements ProductService{
 		}else {
 			return mapToProductReponse(productsEntityList);
 		}
+	}
+
+	@Override
+	public void updateProductStock(Integer storeId, Integer productId, Integer stockQuantity) {
+		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(storeId))) {
+			productsRepository.updateProductStock(productId, stockQuantity, storeId);
+		}else {
+			throw new NotFoundException("store with ID " + storeId + " not found.");
+		}
+		
 	}
 
 }

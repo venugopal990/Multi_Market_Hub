@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.multimarkethub.orderservice.entity.OrderItemsEntity;
 import com.multimarkethub.productservice.utils.JsonTimestampSerializer;
 
 import jakarta.persistence.CascadeType;

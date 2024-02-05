@@ -1,4 +1,4 @@
-package com.multimarkethub.userservice.beans;
+package com.multimarkethub.orderservice.beans;
 
 import java.sql.Timestamp;
 import java.util.Date;

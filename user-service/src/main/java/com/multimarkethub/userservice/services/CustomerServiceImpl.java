@@ -10,6 +10,7 @@ import com.multimarkethub.userservice.beans.Customer;
 import com.multimarkethub.userservice.entity.AdminEntity;
 import com.multimarkethub.userservice.entity.CustomerEntity;
 import com.multimarkethub.userservice.exception.NotFoundException;
+import com.multimarkethub.userservice.proxy.OrderServiceProxy;
 import com.multimarkethub.userservice.repository.CustomersRepository;
 
 
@@ -18,11 +19,14 @@ public class CustomerServiceImpl implements UserService {
 	
 	private final CustomersRepository customersRepository;
     private final PasswordService passwordService;
+    private final OrderServiceProxy orderServiceProxy;
+
 
     @Autowired
-    public CustomerServiceImpl(CustomersRepository customersRepository, PasswordService passwordService) {
+    public CustomerServiceImpl(CustomersRepository customersRepository, PasswordService passwordService, OrderServiceProxy orderServiceProxy) {
         this.customersRepository = customersRepository;
         this.passwordService = passwordService;
+        this.orderServiceProxy = orderServiceProxy;
     }
 
 	@Override
@@ -59,7 +63,8 @@ public class CustomerServiceImpl implements UserService {
 	
 	private CustomerEntity covertCustomerToCustomerEntity(Customer customer) {
 		
-		return new CustomerEntity(customer.getId(), customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getPassword(), customer.getAddress(), customer.getPhoneNumber(), customer.getStoreId());
+		return new CustomerEntity(customer.getId(), customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getPassword(), customer.getAddress(), customer.getPhoneNumber(), customer.getStoreId(),
+				customer.isEmailIsVerified());
 		
 	}
 
@@ -70,11 +75,11 @@ public class CustomerServiceImpl implements UserService {
 			Timestamp timeStamp = customersRepository.findCurrentTimeStamp();
 			customerEntity.setCustomerCreatedAt(timeStamp);
 			customerEntity.setCustomerUpdatedAt(timeStamp);
-			customerEntity.setCustomerEmailVerified(false);
 			customerEntity.setCustomerPassword(passwordService.gethashedPassword(((Customer)customer).getPassword()));
+			orderServiceProxy.sendVerificationEmail(((Customer)customer).getEmail());
 			return covertCustomersEntityToCustomer(customersRepository.save(customerEntity));
 		}else {
-			throw new IllegalArgumentException("The email address " + ((Customer)customer).getEmail() + " is already associated with an existing admin.");
+			throw new IllegalArgumentException("The email address " + ((Customer)customer).getEmail() + " is already associated with an existing customer.");
 		}
 	}
 
@@ -84,7 +89,7 @@ public class CustomerServiceImpl implements UserService {
 	public Object updateUser(Object customer) throws NotFoundException {
 		if(customersRepository.existsById(((Customer)customer).getId())) {
 			customersRepository.updateCustomerDetails(((Customer)customer).getId(), ((Customer)customer).getFirstName(), ((Customer)customer).getLastName(), ((Customer)customer).getAddress(), ((Customer)customer).getPhoneNumber(), 
-					customersRepository.findCurrentTimeStamp(), ((Customer)customer).getStoreId());
+					customersRepository.findCurrentTimeStamp(), ((Customer)customer).getStoreId()  , ((Customer)customer).isEmailIsVerified());
 			return covertCustomersEntityToCustomer(customersRepository.findById(((Customer)customer).getId()).get());
 		}else {
 			throw new NotFoundException("Customer with ID " + ((Customer)customer).getId() + " not found.");
@@ -121,7 +126,12 @@ public class CustomerServiceImpl implements UserService {
 	
 	@Override
 	public void updateStoreId(Integer storeId, Integer userId) {
-		// TODO Auto-generated method stub
+   // TODO document why this method is empty
+ }
+
+	@Override
+	public void updateVerifiedEmail(List<String> emailsList) {
+		customersRepository.updateVerifiedEmail(emailsList,customersRepository.findCurrentTimeStamp());
 		
 	}
 

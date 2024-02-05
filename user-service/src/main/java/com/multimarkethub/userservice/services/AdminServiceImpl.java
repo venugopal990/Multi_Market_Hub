@@ -12,6 +12,7 @@ import com.multimarkethub.userservice.beans.Admin;
 import com.multimarkethub.userservice.beans.UserDetails;
 import com.multimarkethub.userservice.entity.AdminEntity;
 import com.multimarkethub.userservice.exception.NotFoundException;
+import com.multimarkethub.userservice.proxy.OrderServiceProxy;
 import com.multimarkethub.userservice.repository.AdminsRepository;
 
 @Service
@@ -85,7 +86,6 @@ public class AdminServiceImpl implements UserService {
 	@Override
 	public void updateStoreId(Integer storeId, Integer adminId) {
 		try {
-			System.out.println("Store id:"+storeId+":::AdminId::"+adminId);
 			adminsRepository.updateStoreId(storeId,adminsRepository.findCurrentTimeStamp(), adminId);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,6 +140,12 @@ public class AdminServiceImpl implements UserService {
 		}else {
 			throw new NotFoundException("No admin found with the email address: " + email);
 		}
+	}
+
+	@Override
+	public void updateVerifiedEmail(List<String> emailsList) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

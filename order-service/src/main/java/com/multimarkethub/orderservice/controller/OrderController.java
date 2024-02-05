@@ -11,17 +11,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.multimarkethub.orderservice.beans.CheckOutResponse;
 import com.multimarkethub.orderservice.beans.Orders;
 import com.multimarkethub.orderservice.beans.PaymentType;
+import com.multimarkethub.orderservice.services.EmailService;
 import com.multimarkethub.orderservice.services.OrderService;
-
 import jakarta.validation.Valid;
 
 @RestController
 public class OrderController {
 	
 	private final OrderService orderService;
+	private final EmailService emailService;
 	
-	public OrderController(OrderService orderService) {
+	public OrderController(OrderService orderService, EmailService emailService) {
 		this.orderService =  orderService; 
+		this.emailService = emailService;
 	}
 	
 	
@@ -33,10 +35,31 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders")
-	public List<Orders> getOrders(@RequestParam(required = true) Integer storeId, @RequestParam(required = true) Integer customerId) {
+	public List<Orders> getOrders(@RequestParam(required = true) Integer storeId, @RequestParam(required = true) Integer customerId, @RequestParam(defaultValue = "0") Integer orderId) {
 		
-		return orderService.getOrders(storeId, customerId);
+		return orderService.getOrders(storeId, customerId,orderId);
 		
 	}
+	
+	
+	@PostMapping("/sendEmail")
+	public String getOrders(@RequestParam(required = true) String toEmail, @RequestBody(required = true) String body, @RequestBody(required = true) String subject){
+		
+		return emailService.sendEmail(toEmail, body, subject);
+		
+	}
+	
+	
+	@PostMapping("/verifyEmail")
+    public String sendVerificationEmail(@RequestParam String emailAddress) {
+		emailService.sendVerificationEmail(emailAddress);
+        return "Verification email sent to: " + emailAddress;
+    }
+	
+	
+	@GetMapping("/verifiedEmailsFromAws")
+    public List<String> verifiedEmails() {
+		return emailService.getVerifiedEmails();
+    }
 
 }

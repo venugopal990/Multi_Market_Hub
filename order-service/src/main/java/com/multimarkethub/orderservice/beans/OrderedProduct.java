@@ -7,6 +7,7 @@ public class OrderedProduct {
 	private String productImageUrl;
 	private Integer quantity;
 	private Double price;
+	private Double productOriginalprice;
 	
 	public Integer getProductId() {
 		return productId;
@@ -38,14 +39,21 @@ public class OrderedProduct {
 	public void setPrice(Double price) {
 		this.price = price;
 	}
+	public Double getProductOriginalprice() {
+		return productOriginalprice;
+	}
+	public void setProductOriginalprice(Double productOriginalprice) {
+		this.productOriginalprice = productOriginalprice;
+	}
 	public OrderedProduct(Integer productId, String productName, String productImageUrl, Integer quantity,
-			Double price) {
+			Double price, Double productOriginalprice) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
 		this.productImageUrl = productImageUrl;
 		this.quantity = quantity;
 		this.price = price;
+		this.productOriginalprice = productOriginalprice;
 	}
 	public OrderedProduct() {
 		super();

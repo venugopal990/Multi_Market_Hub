@@ -12,6 +12,6 @@ public interface OrderService {
 	
 	public CheckOutResponse cartCheckOut(Integer storeId, @RequestParam Integer customerId, PaymentType paymentType);
 
-	public List<Orders> getOrders(Integer storeId, Integer customerId);
+	public List<Orders> getOrders(Integer storeId, Integer customerId, Integer orderId);
 
 }

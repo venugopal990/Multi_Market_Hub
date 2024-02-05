@@ -145,7 +145,7 @@ public class CustomerEntity {
 	}
 
 	public CustomerEntity(Integer customerId, String customerFirstName, String customerLastName, String customerEmail,
-			String customerPassword, String customerAddress, String customerPhoneNumber, Integer storeId) {
+			String customerPassword, String customerAddress, String customerPhoneNumber, Integer storeId, Boolean customerEmailVerified) {
 		super();
 		this.customerId = customerId;
 		this.customerFirstName = customerFirstName;
@@ -155,6 +155,7 @@ public class CustomerEntity {
 		this.customerAddress = customerAddress;
 		this.customerPhoneNumber = customerPhoneNumber;
 		this.storeId = storeId;
+		this.customerEmailVerified = customerEmailVerified;
 	}
 
 	public CustomerEntity() {

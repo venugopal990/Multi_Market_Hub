@@ -41,6 +41,13 @@ public class CustomerController {
 		customer.setStoreId(storeId);
 		return (Customer) customerServices.createUser(customer);
 	}
+	
+	
+	@PostMapping("/updateVerifiedEmail")
+	public void updateVerifiedEmail(@RequestBody List<String> emailsList) {
+		customerServices.updateVerifiedEmail(emailsList);
+	}
+
 
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers")

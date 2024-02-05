@@ -13,7 +13,8 @@ public interface OrdersRepository extends JpaRepository<OrdersEntity, Integer>{
 	@Query(value="select current_timestamp",nativeQuery=true)
 	Timestamp findCurrentTimeStamp();
 	
-	
 	List<OrdersEntity> findByStoreIdAndCustomerId(Integer storeId, Integer customerId);
+	
+	List<OrdersEntity> findByStoreIdAndCustomerIdAndOrderId(Integer storeId, Integer customerId, Integer orderId);
 
 }

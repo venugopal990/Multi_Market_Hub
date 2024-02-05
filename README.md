@@ -51,7 +51,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **POST /admins** - creates a new users (admin) 
 - **PUT /admins/{id}** - updates an existing users by ID 
 - **DELETE /admins/{id}** - deletes a users by ID 
-- **POST /admins/login?email=test@gmail.com&password=test123** - Sign in using your email address and password.
+- **POST /admins/login?email=&password=** - Sign in using your email address and password.
 
 
 ## Stores API's (STORE-SERVICE)
@@ -80,7 +80,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **GET /customers** - retrieves a list of all users
 - **GET /customers/{id}** - retrieves a specific users by ID
 - **POST /customers** - creates a new users (admin)
-- **POST /customers?storeId=?** - creates a new users (customer) based on store id
+- **POST /customers?storeId=** - creates a new users (customer) based on store id
 - **PUT /customers/{id}** - updates an existing users by ID
 - **DELETE /customers/{id}** - deletes a users by ID
 

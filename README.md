@@ -91,7 +91,14 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **GET /cartItems?storeId=&customerId=** - Get the products from the cart
 - **DELETE /cartItems/{productId}?storeId=&customerId=** - Delete the products from the cart
 - **POST /checkout?storeId=&customerId=** - Order the items from cart 
+- **GET /orders?storeId=&customerId=&orderId=?** - Get the products from the cart
+- **GET /paymentMethods** - Get the payment methods
 
 
 ## AWS API's
+
+- **POST /sendEmail?toEmail=&subject=** - Send Email using AWS Simple Email Service 
+- **POST /verifyEmail?emailAddress=** - Verify Email using AWS Simple Email Service
+- **GET /verifiedEmailsFromAws** - Get Verified Emails using AWS Simple Email Service 
+- **POST /products/images/upload** - Upload product images to an AWS S3 bucket
 

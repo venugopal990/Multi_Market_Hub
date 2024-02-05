@@ -90,5 +90,8 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **POST /cartItems** - Add the products to the cart
 - **GET /cartItems?storeId=&customerId=** - Get the products from the cart
 - **DELETE /cartItems/{productId}?storeId=&customerId=** - Delete the products from the cart
+- **POST /checkout?storeId=&customerId=** - Order the items from cart 
 
+
+## AWS API's
 

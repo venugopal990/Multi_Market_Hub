@@ -43,7 +43,7 @@ public class OrderController {
 	
 	
 	@PostMapping("/sendEmail")
-	public String getOrders(@RequestParam(required = true) String toEmail, @RequestBody(required = true) String body, @RequestBody(required = true) String subject){
+	public String getOrders(@RequestParam(required = true) String toEmail, @RequestBody(required = true) String body, @RequestParam(required = true) String subject){
 		
 		return emailService.sendEmail(toEmail, body, subject);
 		

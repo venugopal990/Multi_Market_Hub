@@ -36,20 +36,26 @@ public class Utils {
 	}
 	
 	
-	public String readHTMLFile() throws IOException {
-		String fileName= "order_email_template.html";
-        Resource resource = resourceLoader.getResource("classpath:" + fileName);
-        InputStream inputStream = resource.getInputStream();
-        if (inputStream != null) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                String htmlContent = reader.lines().collect(Collectors.joining("\n"));
-                return htmlContent;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("File not found: " + fileName);
-        }
+	public String readHTMLFile(Integer templateId) throws IOException {
+		String fileName="";
+		if(templateId == 1)
+		  fileName= "order_email_template.html";
+		else if(templateId == 2)
+		  fileName= "delivery_email.html";
+		if(!fileName.isEmpty()) {
+			Resource resource = resourceLoader.getResource("classpath:" + fileName);
+			InputStream inputStream = resource.getInputStream();
+			if (inputStream != null) {
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+					String htmlContent = reader.lines().collect(Collectors.joining("\n"));
+					return htmlContent;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				System.out.println("File not found: " + fileName);
+			}
+		}
         return null;
     }
 

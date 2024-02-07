@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,8 +53,7 @@ public class OrderController {
 	
 	@PostMapping("/verifyEmail")
     public String sendVerificationEmail(@RequestParam String emailAddress) {
-		emailService.sendVerificationEmail(emailAddress);
-        return "Verification email sent to: " + emailAddress;
+		return emailService.sendVerificationEmail(emailAddress);
     }
 	
 	
@@ -61,5 +61,12 @@ public class OrderController {
     public List<String> verifiedEmails() {
 		return emailService.getVerifiedEmails();
     }
+	
+	@PutMapping("/updateOrders")
+	public List<Orders> updateOrder(@RequestParam(required = true) Integer storeId, @RequestParam(required = true) Integer customerId, @RequestParam(required = true) Integer orderId, 
+			@RequestParam(required = true) Integer deliveryStatusId) {
+		return orderService.updateOrder(storeId,customerId,orderId,deliveryStatusId);
+		
+	}
 
 }

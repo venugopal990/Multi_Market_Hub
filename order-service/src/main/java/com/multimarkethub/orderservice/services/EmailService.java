@@ -7,7 +7,7 @@ public interface EmailService {
 	
 	public String sendEmail(String toEmail, String body, String subject);
 
-	public void sendVerificationEmail(String emailAddress);
+	public String sendVerificationEmail(String emailAddress);
 
 	public List<String> getVerifiedEmails();
 

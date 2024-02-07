@@ -14,4 +14,6 @@ public interface OrderService {
 
 	public List<Orders> getOrders(Integer storeId, Integer customerId, Integer orderId);
 
+	public List<Orders> updateOrder(Integer storeId, Integer customerId, Integer orderId, Integer deliveryStatusId);
+
 }

@@ -9,12 +9,14 @@ import org.springframework.stereotype.Service;
 
 import com.multimarkethub.orderservice.beans.AddToCartResponse;
 import com.multimarkethub.orderservice.beans.Cart;
+import com.multimarkethub.orderservice.beans.Customer;
 import com.multimarkethub.orderservice.beans.AddToCartRequest;
 import com.multimarkethub.orderservice.beans.ProductReponse;
 import com.multimarkethub.orderservice.entity.CartitemsEntity;
 import com.multimarkethub.orderservice.entity.CartsEntity;
 import com.multimarkethub.orderservice.exception.NotFoundException;
 import com.multimarkethub.orderservice.proxy.ProductServiceProxy;
+import com.multimarkethub.orderservice.proxy.UserServiceProxy;
 import com.multimarkethub.orderservice.repository.CartRepository;
 import com.multimarkethub.orderservice.repository.CartitemsRepository;
 
@@ -25,44 +27,54 @@ public class CartServiceImpl implements CartService{
 	private final CartitemsRepository cartitemsRepository;
 	private final CartRepository cartRepository;
 	private final ProductServiceProxy productServiceProxy;
+	private final UserServiceProxy userServiceProxy;
 	
 	@Autowired
-	public CartServiceImpl(CartitemsRepository cartitemsRepository,CartRepository cartRepository,ProductServiceProxy productServiceProxy) {
+	public CartServiceImpl(CartitemsRepository cartitemsRepository,CartRepository cartRepository,ProductServiceProxy productServiceProxy,UserServiceProxy userServiceProxy) {
 		this.cartitemsRepository =  cartitemsRepository;
 		this.cartRepository =  cartRepository;
 		this.productServiceProxy =  productServiceProxy;
+		this.userServiceProxy = userServiceProxy;
 	}
-
-	@Override
 	public AddToCartResponse addItemToCart(AddToCartRequest addToCartRequest) {
-		
-		List<ProductReponse> productReponseList = productServiceProxy.getProducts(addToCartRequest.getStoreId(), addToCartRequest.getProductId());
-		if(!productReponseList.isEmpty()) {
-			ProductReponse productReponse= productReponseList.get(0);
-			if(addToCartRequest.getQuantity()<=productReponse.getProductStockQuantity()) {
-				Integer cartId ;
-				CartsEntity cartsEntity = getByCustomerIdAndStoreId(addToCartRequest.getCustomerId(),addToCartRequest.getStoreId());
-				if(cartsEntity!=null) {
-					cartId = cartsEntity.getCartId();
+		List<Customer> customerList;
+		try {
+			customerList = userServiceProxy.getCustomers(addToCartRequest.getCustomerId(),
+					addToCartRequest.getStoreId());
+		} catch (Exception e) {
+			throw new NotFoundException("Customer with ID " + addToCartRequest.getCustomerId() + " not found.");
+		}
+		if( customerList!= null && !customerList.isEmpty()) {
+			List<ProductReponse> productReponseList = productServiceProxy.getProducts(addToCartRequest.getStoreId(), addToCartRequest.getProductId());
+			if(!productReponseList.isEmpty()) {
+				ProductReponse productReponse= productReponseList.get(0);
+				if(addToCartRequest.getQuantity()<=productReponse.getProductStockQuantity()) {
+					Integer cartId ;
+					CartsEntity cartsEntity = getByCustomerIdAndStoreId(addToCartRequest.getCustomerId(),addToCartRequest.getStoreId());
+					if(cartsEntity!=null) {
+						cartId = cartsEntity.getCartId();
+					}else {
+						cartId = saveToCart(addToCartRequest);   
+					}
+					CartitemsEntity cartitemsEntity = cartitemsRepository.findByProductIdAndCartId(addToCartRequest.getProductId(),cartId);
+					Double unitPrice= calcluateProductPrice(addToCartRequest.getQuantity(), productReponse.getProductPrice());
+					if(cartitemsEntity!=null) {
+						cartitemsRepository.updateCartItems(addToCartRequest.getQuantity(), unitPrice, cartitemsEntity.getCartItemId());
+					}else {
+						saveToCartItems(cartId, unitPrice, addToCartRequest);
+					}
+					List<CartitemsEntity> cartitemsEntityList = cartitemsRepository.findByCartId(cartId);
+					return new AddToCartResponse(cartId,addToCartRequest.getProductId(),addToCartRequest.getQuantity(), unitPrice, getTotalPriceOfTheCart(cartitemsEntityList),
+							cartitemsEntityList.size(),productReponse.getProductStockQuantity()); 
 				}else {
-					cartId = saveToCart(addToCartRequest);   
+					throw new NotFoundException("OutOfStock Exception");
 				}
-				CartitemsEntity cartitemsEntity = cartitemsRepository.findByProductIdAndCartId(addToCartRequest.getProductId(),cartId);
-				Double unitPrice= calcluateProductPrice(addToCartRequest.getQuantity(), productReponse.getProductPrice());
-				if(cartitemsEntity!=null) {
-					cartitemsRepository.updateCartItems(addToCartRequest.getQuantity(), unitPrice, cartitemsEntity.getCartItemId());
-				}else {
-					saveToCartItems(cartId, unitPrice, addToCartRequest);
-				}
-				List<CartitemsEntity> cartitemsEntityList = cartitemsRepository.findByCartId(cartId);
-				return new AddToCartResponse(cartId,addToCartRequest.getProductId(),addToCartRequest.getQuantity(), unitPrice, getTotalPriceOfTheCart(cartitemsEntityList),
-						cartitemsEntityList.size(),productReponse.getProductStockQuantity()); 
+
 			}else {
-				throw new NotFoundException("OutOfStock Exception");
+				throw new NotFoundException("product with ID " + addToCartRequest.getProductId() + " not found.");
 			}
-			
 		}else {
-			throw new NotFoundException("product with ID " + addToCartRequest.getProductId() + " not found.");
+			throw new NotFoundException("Customer with ID " + addToCartRequest.getCustomerId() + " not found.");
 		}
 	}
 	

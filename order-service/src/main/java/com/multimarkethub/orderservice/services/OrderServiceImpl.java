@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
 			paymentService.savePayments(orderId, storeId, cartTotalAmount, paymentType);
 			updateProductStock(storeId, cartsEntity.getCartItems());
 			cartService.removeItemFromCart(storeId, customerId, 0);
-			HashMap<String, String> orderEmailMap  = sendOrderEmail(getOrders(storeId, customerId, orderId), storeId, customerId);
+			HashMap<String, String> orderEmailMap  = sendOrderEmail(getOrders(storeId, customerId, orderId), storeId, customerId,1);
 			if(!orderEmailMap.isEmpty()) {
 				String subject = "Your Order Confirmation - ["+orderEmailMap.get("orderId")+"]";
 				emailService.sendEmail(orderEmailMap.get("toEmail"), orderEmailMap.get("html"), subject);
@@ -89,17 +89,18 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	@Async
-	private HashMap<String, String> sendOrderEmail(List<Orders> orderList,Integer storeId, Integer customerId) {
+	private HashMap<String, String> sendOrderEmail(List<Orders> orderList,Integer storeId, Integer customerId, Integer templateId) {
 		HashMap<String, String> orderEmailMap =  new HashMap<String, String>();
 		String htmlFile = "";
 		try {
 			List<Customer> customerList = userServiceProxy.getCustomers(customerId, storeId);
 			if(customerList.get(0).isEmailIsVerified()) {
-				htmlFile = utils.readHTMLFile();
+				htmlFile = utils.readHTMLFile(templateId);
 				htmlFile = htmlFile.replace("[Customer's Name]", customerList.get(0).getFirstName()+" "+customerList.get(0).getLastName());
 				htmlFile = htmlFile.replace("[Customer's Shipping Address]", customerList.get(0).getAddress());
 				htmlFile = htmlFile.replace("[Order Number]", orderList.get(0).getOrderId().toString());
 				htmlFile = htmlFile.replace("[Order Date]", orderList.get(0).getOrderDateAndTime());
+						htmlFile = htmlFile.replace("[Delivered Date]", orderList.get(0).getOrderUpdatedDateAndTime());
 				htmlFile = htmlFile.replace("[Subtotal]", orderList.get(0).getOrderTotalAmount().toString());
 				StringBuilder sf = new StringBuilder();
 				for(OrderedProduct orderedProduct : orderList.get(0).getOrderedProductList()) {
@@ -134,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
 		java.util.Date today=new java.util.Date();
 		Timestamp timeStamp = ordersRepository.findCurrentTimeStamp();
 		OrdersEntity ordersEntity = new OrdersEntity(cartsEntity.getCustomerId(), new java.sql.Date (today.getTime ()), cartTotalAmount, cartsEntity.getStoreId(),
-				2, 2, timeStamp, timeStamp);
+				2, 1, timeStamp, timeStamp);
 		Integer orderId = ordersRepository.save(ordersEntity).getOrderId();
 		List<OrderItemsEntity> orderItemsEntitiesList = new ArrayList<>();
 		for (CartitemsEntity cartitemsEntity : cartItemsList) {
@@ -162,6 +163,7 @@ public class OrderServiceImpl implements OrderService {
 				orders.setOrderId(ordersEntity.getOrderId());
 				SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
 				orders.setOrderDateAndTime(sdf.format(ordersEntity.getOrderCreatedAt()));
+				orders.setOrderUpdatedDateAndTime(sdf.format(ordersEntity.getOrderUpdatedAt()));
 				orders.setOrderTotalAmount(ordersEntity.getTotalAmount());
 				orders.setOrderStatus(ordersEntity.getOrderStatusesEntity().getStatusName());
 				orders.setOrderDeliveryStatus(ordersEntity.getDeliveryStatusesEntity().getStatusName());
@@ -189,5 +191,21 @@ public class OrderServiceImpl implements OrderService {
 		return ordersList;
 
 	}
+
+	@Override
+	public List<Orders> updateOrder(Integer storeId, Integer customerId, Integer orderId, Integer deliveryStatusId) {
+		ordersRepository.updateDeliveryStatus(orderId, deliveryStatusId, storeId, customerId);
+		if(deliveryStatusId == 4) {
+			paymentService.updatePaymentStatus(orderId, 2, storeId);
+			HashMap<String, String> orderEmailMap  = sendOrderEmail(getOrders(storeId, customerId, orderId), storeId, customerId,2);
+			if(!orderEmailMap.isEmpty()) {
+				String subject = "Your Order Successfully Delivered - Thank You!";
+				emailService.sendEmail(orderEmailMap.get("toEmail"), orderEmailMap.get("html"), subject);
+			}
+		}
+		return getOrders(storeId, customerId, orderId);
+	}
+
+
 
 }

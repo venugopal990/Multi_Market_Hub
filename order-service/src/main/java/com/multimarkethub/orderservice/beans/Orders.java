@@ -6,6 +6,7 @@ public class Orders {
 	
 	private Integer orderId;
 	private String orderDateAndTime;
+	private String orderUpdatedDateAndTime;
 	private Double orderTotalAmount;
 	private String orderStatus;
 	private String orderDeliveryStatus;
@@ -55,11 +56,18 @@ public class Orders {
 	public void setPaymentDetails(PaymentDetails paymentDetails) {
 		this.paymentDetails = paymentDetails;
 	}
-	public Orders(Integer orderId, String orderDateAndTime, Double orderTotalAmount, String orderStatus,
+	public String getOrderUpdatedDateAndTime() {
+		return orderUpdatedDateAndTime;
+	}
+	public void setOrderUpdatedDateAndTime(String orderUpdatedDateAndTime) {
+		this.orderUpdatedDateAndTime = orderUpdatedDateAndTime;
+	}
+	public Orders(Integer orderId, String orderDateAndTime,String orderUpdatedDateAndTime, Double orderTotalAmount, String orderStatus,
 			String orderDeliveryStatus, List<OrderedProduct> orderedProductList, PaymentDetails paymentDetails) {
 		super();
 		this.orderId = orderId;
 		this.orderDateAndTime = orderDateAndTime;
+		this.orderUpdatedDateAndTime = orderUpdatedDateAndTime;
 		this.orderTotalAmount = orderTotalAmount;
 		this.orderStatus = orderStatus;
 		this.orderDeliveryStatus = orderDeliveryStatus;

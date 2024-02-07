@@ -23,4 +23,6 @@ public interface ProductService {
 
 	public void updateProductStock(Integer storeId, Integer productId, Integer stockQuantity);
 
+	public void createDummyProduct(Integer storeId, @Valid List<ProductRequest> productRequestList);
+
 }

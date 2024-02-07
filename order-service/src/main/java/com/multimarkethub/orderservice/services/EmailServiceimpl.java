@@ -67,19 +67,32 @@ public class EmailServiceimpl implements EmailService {
 	
 	
 	@Override
-	public void sendVerificationEmail(String emailAddress) {
-		VerifyEmailAddressRequest verifyRequest = new VerifyEmailAddressRequest().withEmailAddress(emailAddress);
-		amazonSimpleEmailService.verifyEmailAddress(verifyRequest);
+	public String sendVerificationEmail(String emailAddress) {
+		if(!getAwsVerifiedEmails().contains(emailAddress)) {
+			VerifyEmailAddressRequest verifyRequest = new VerifyEmailAddressRequest().withEmailAddress(emailAddress);
+			amazonSimpleEmailService.verifyEmailAddress(verifyRequest);
+			return "Verification email sent to: " + emailAddress;
+		}else {
+			return emailAddress+" already Verified. Thank you";
+		}
 	}
 	
-	@Scheduled(cron = "0 0 * * * *")
-	@Override
-	public List<String> getVerifiedEmails() {
+	
+	private List<String> getAwsVerifiedEmails() {
         ListIdentitiesRequest listIdentitiesRequest = new ListIdentitiesRequest();
 		listIdentitiesRequest.setIdentityType("EmailAddress");
         ListIdentitiesResult result = amazonSimpleEmailService.listIdentities(listIdentitiesRequest);
         userServiceProxy.updateVerifiedEmail(result.getIdentities());
         return result.getIdentities();
+	}
+	
+	
+	@Scheduled(cron = "0 0 * * * *")
+	@Override
+	public List<String> getVerifiedEmails() {
+		List<String> emailList = getAwsVerifiedEmails();
+        userServiceProxy.updateVerifiedEmail(getAwsVerifiedEmails());
+        return emailList;
 	}
 
 }

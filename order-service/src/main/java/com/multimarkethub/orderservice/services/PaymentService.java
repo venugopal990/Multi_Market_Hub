@@ -11,4 +11,6 @@ public interface PaymentService {
 
 	Integer savePayments(Integer orderId, Integer storeId, Double totalAmount, PaymentType paymentType);
 
+	void updatePaymentStatus(Integer orderId, Integer paymentStatusId, Integer storeId);
+
 }

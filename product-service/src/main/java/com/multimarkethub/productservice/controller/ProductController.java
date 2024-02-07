@@ -45,6 +45,12 @@ public class ProductController {
 		productService.createProduct(storeId, productRequest);
 	}
 	
+	@PostMapping("/stores/{storeId}/dummyproducts")
+	@ResponseStatus(code = HttpStatus.CREATED)
+	public void createDummyProduct(@PathVariable Integer storeId, @Valid @RequestBody(required = true) List<ProductRequest> productRequestList) {
+		productService.createDummyProduct(storeId, productRequestList);
+	}
+	
 	
 	@GetMapping("/stores/{storeId}/products")
 	public List<ProductReponse> getProducts(@PathVariable Integer storeId) {

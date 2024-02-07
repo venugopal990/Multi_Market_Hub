@@ -140,4 +140,29 @@ public class ProductServiceImpl implements ProductService{
 		
 	}
 
+	@Override
+	public void createDummyProduct(Integer storeId, @Valid List<ProductRequest> productRequestList) {
+		if(Boolean.TRUE.equals(storeServiceProxy.getStoreById(storeId))) {
+			List<ProductsEntity> productsEntityList= new ArrayList<>();
+			for(ProductRequest productRequest:productRequestList) {
+				Integer categoryId = categoryService.getCategoryByName(storeId, productRequest.getCategoryName());
+				if(categoryId==0) {
+					categoryId = categoryService.createCategory(storeId, productRequest.getCategoryName());
+				}
+
+				Timestamp timeStamp = productsRepository.findCurrentTimeStamp();
+
+				ProductsEntity productsEntity = new ProductsEntity(productRequest.getProductName(), productRequest.getProductDescription(), productRequest.getProductPrice(), 
+						productRequest.getProductStockQuantity(), categoryId, productRequest.getUnitId(), storeId,productRequest.getProductImageUrl(), timeStamp, timeStamp);
+				
+				productsEntityList.add(productsEntity);
+
+			}
+			productsRepository.saveAll(productsEntityList);
+
+		}
+	}
+
+
+
 }

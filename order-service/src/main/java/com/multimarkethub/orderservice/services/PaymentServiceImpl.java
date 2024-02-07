@@ -52,5 +52,11 @@ public class PaymentServiceImpl  implements PaymentService{
 				, storeId);
 		return paymentsRepository.save(paymentsEntity).getPaymentId();
 	}
+	
+	
+	@Override
+	public void updatePaymentStatus(Integer orderId, Integer paymentStatusId, Integer storeId) {
+		paymentsRepository.updateProductStock(orderId, paymentStatusId, storeId);
+	}
 
 }

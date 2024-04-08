@@ -72,6 +72,7 @@ public class OrderServiceImpl implements OrderService {
 		if(cartsEntity==null)
 			throw new NotFoundException("No products found in the cart.");
 		if(Boolean.TRUE.equals(isProductsInStock(cartsEntity.getCartItems()))) {
+			emailService.getVerifiedEmails();
 			Double cartTotalAmount = CartServiceImpl.getTotalPriceOfTheCart(cartsEntity.getCartItems());
 			Integer orderId = saveOrders(cartsEntity,cartTotalAmount);
 			paymentService.savePayments(orderId, storeId, cartTotalAmount, paymentType);

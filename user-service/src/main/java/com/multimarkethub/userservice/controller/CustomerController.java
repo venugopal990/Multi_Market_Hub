@@ -51,12 +51,11 @@ public class CustomerController {
 
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers")
-	public List<Customer> getCustomers(@RequestParam(required = true) String storeId) {
-		return (List<Customer>) customerServices.getUsers(null);
+	public List<Customer> getCustomers() {
+		return (List<Customer>) customerServices.getUsers(null,null);
 	}
 
 	/**
-	 * TODO Add StoreId in the condition
 	 * @param id
 	 * @param storeId
 	 * @return
@@ -64,19 +63,17 @@ public class CustomerController {
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers/{id}")
 	public List<Customer> getCustomers(@PathVariable Integer id,@RequestParam(required = true) Integer storeId) {
-		return (List<Customer>) customerServices.getUsers(id);
+		return (List<Customer>) customerServices.getUsers(id,storeId);
 	}
 
 
 	/**
-	 * TODO Add StoreId in the condition
 	 * @param customer
 	 * @param storeId
 	 * @return
 	 */
 	@PutMapping("/customers")
-	public Customer updateCustomer(@Valid @RequestBody Customer customer,@RequestParam(required = true) Integer storeId) {
-		customer.setStoreId(storeId);
+	public Customer updateCustomer(@Valid @RequestBody Customer customer) {
 		return (Customer) customerServices.updateUser(customer);
 	}
 
@@ -94,7 +91,7 @@ public class CustomerController {
 	
 	@PostMapping("/customers/login")
 	public ResponseEntity<Response> authenticateAdmin(@Valid @RequestBody LoginRequest loginRequest){
-		Customer customer = (Customer) customerServices.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
+		Customer customer = (Customer) customerServices.authenticateUser(loginRequest);
 		if(customer != null) {
 			return ResponseEntity.ok(new Response(LocalDateTime.now(),true, "Login successful","{\"storeId\":"+customer.getStoreId()+",\"CustomerId\":"+customer.getId()+"}"));
 		}else {

@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.multimarkethub.userservice.beans.Customer;
+import com.multimarkethub.userservice.beans.LoginRequest;
 import com.multimarkethub.userservice.entity.AdminEntity;
 import com.multimarkethub.userservice.entity.CustomerEntity;
 import com.multimarkethub.userservice.exception.NotFoundException;
@@ -30,19 +31,20 @@ public class CustomerServiceImpl implements UserService {
     }
 
 	@Override
-	public List<Customer> getUsers(Integer id) throws NotFoundException {
-		List<CustomerEntity> customerEntityList = new ArrayList<>() ;
+	public List<Customer> getUsers(Integer id,Integer storeId) throws NotFoundException {
+		List<CustomerEntity> customerEntityList = new ArrayList<>();
+		orderServiceProxy.verifiedEmails();
 		if(id == null) {
 			customerEntityList = customersRepository.findAll();
 			if(customerEntityList.isEmpty()) {
 				throw new NotFoundException("No Customer found. The requested operation cannot be completed.");
 			}
 		}else {
-			Optional<CustomerEntity> customerEntityOptional = customersRepository.findById(id);
-			if(customerEntityOptional.isEmpty()) {
+			CustomerEntity customerEntity = customersRepository.findByCustomerIdAndStoreId(id, storeId);
+			if(customerEntity == null) {
 				throw new NotFoundException("Customer with ID " + id + " not found.");
 			}else {
-				customerEntityList.add(customerEntityOptional.get());
+				customerEntityList.add(customerEntity);
 			}
 		}
 		return covertCustomerEntityListToCustomerList(customerEntityList);
@@ -88,6 +90,9 @@ public class CustomerServiceImpl implements UserService {
 	@Override
 	public Object updateUser(Object customer) throws NotFoundException {
 		if(customersRepository.existsById(((Customer)customer).getId())) {
+			if(((Customer)customer).getStoreId() == null) {
+				throw new NotFoundException("Store ID not found.");
+			}
 			customersRepository.updateCustomerDetails(((Customer)customer).getId(), ((Customer)customer).getFirstName(), ((Customer)customer).getLastName(), ((Customer)customer).getAddress(), ((Customer)customer).getPhoneNumber(), 
 					customersRepository.findCurrentTimeStamp(), ((Customer)customer).getStoreId()  , ((Customer)customer).isEmailIsVerified());
 			return covertCustomersEntityToCustomer(customersRepository.findById(((Customer)customer).getId()).get());
@@ -110,17 +115,17 @@ public class CustomerServiceImpl implements UserService {
 	
 
 	@Override
-	public Object authenticateUser(String email, String password) {
-		Optional<CustomerEntity> customerEntityOptional =  customersRepository.findCustomerByEmail(email);
+	public Object authenticateUser(LoginRequest loginRequest) {
+		Optional<CustomerEntity> customerEntityOptional =  customersRepository.findCustomerByEmailAndStoreId(loginRequest.getEmail(),loginRequest.getStoreId());
 		if(!customerEntityOptional.isEmpty()) {
 			CustomerEntity customerEntity= customerEntityOptional.get();
-			if(passwordService.authenticateUser(password, customerEntity.getCustomerPassword())) {
+			if(passwordService.authenticateUser(loginRequest.getPassword(), customerEntity.getCustomerPassword())) {
 				return covertCustomersEntityToCustomer(customerEntity);
 			}else {
 				return null;
 			}
 		}else {
-			throw new NotFoundException("No customer found with the email address: " + email);
+			throw new NotFoundException("No customer found with the email address: " + loginRequest.getEmail());
 		}
 	}
 	
@@ -132,7 +137,6 @@ public class CustomerServiceImpl implements UserService {
 	@Override
 	public void updateVerifiedEmail(List<String> emailsList) {
 		customersRepository.updateVerifiedEmail(emailsList,customersRepository.findCurrentTimeStamp());
-		
 	}
 
 }

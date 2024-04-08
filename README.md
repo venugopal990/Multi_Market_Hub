@@ -78,11 +78,12 @@ MultiMarketHub can be deployed in various environments, and the following techno
 
 ## Customers API's (USER-SERVICE)
 - **GET /customers** - retrieves a list of all users
-- **GET /customers/{id}** - retrieves a specific users by ID
+- **GET /customers/{id}?storeId=** - retrieves a specific users by ID
 - **POST /customers** - creates a new users (admin)
 - **POST /customers?storeId=** - creates a new users (customer) based on store id
 - **PUT /customers/{id}** - updates an existing users by ID
 - **DELETE /customers/{id}** - deletes a users by ID
+- **POST /customers/login?email=&password=&storeId=** - Sign in using your email address, password and storeId.
 
 
 ## Order API's (ORDER-SERVICE)
@@ -95,7 +96,7 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **GET /paymentMethods** - Get the payment methods
 
 
-## AWS API's
+## AWS API's (ORDER-SERVICE)
 
 - **POST /sendEmail?toEmail=&subject=** - Send Email using AWS Simple Email Service 
 - **POST /verifyEmail?emailAddress=** - Verify Email using AWS Simple Email Service

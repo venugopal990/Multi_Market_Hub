@@ -45,13 +45,13 @@ public class AdminController {
 	@GetMapping("/admins")
 	public List<Admin> getAdmins() {
 		
-		return (List<Admin>) adminServices.getUsers(null);
+		return (List<Admin>) adminServices.getUsers(null,null);
 	}
 	
 	@SuppressWarnings("unchecked")
 	@GetMapping("/admins/{id}")
 	public List<Admin> getAdmins(@PathVariable Integer id) {
-		return (List<Admin>) adminServices.getUsers(id);
+		return (List<Admin>) adminServices.getUsers(id,null);
 	}
 	
 	
@@ -73,7 +73,7 @@ public class AdminController {
 	
 	@PostMapping("/admins/login")
 	public ResponseEntity<Response> authenticateAdmin(@Valid @RequestBody LoginRequest loginRequest) {
-		Admin admin = (Admin) adminServices.authenticateUser(loginRequest.getEmail(), loginRequest.getPassword());
+		Admin admin = (Admin) adminServices.authenticateUser(loginRequest);
 		if(admin !=null) {
 			return ResponseEntity.ok(new Response(LocalDateTime.now(),true, "Login successful","{\"storeId\":"+admin.getStoreId()+",\"userId\":"+admin.getId()+"}"));
 		}else {

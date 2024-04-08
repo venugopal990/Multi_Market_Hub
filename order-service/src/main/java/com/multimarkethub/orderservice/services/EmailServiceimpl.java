@@ -91,7 +91,7 @@ public class EmailServiceimpl implements EmailService {
 	@Override
 	public List<String> getVerifiedEmails() {
 		List<String> emailList = getAwsVerifiedEmails();
-        userServiceProxy.updateVerifiedEmail(getAwsVerifiedEmails());
+        userServiceProxy.updateVerifiedEmail(emailList);
         return emailList;
 	}
 

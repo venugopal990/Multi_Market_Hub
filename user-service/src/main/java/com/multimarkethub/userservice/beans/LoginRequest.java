@@ -10,6 +10,8 @@ public class LoginRequest {
 	private String email;
 	@NotBlank @NotNull
     private String password;
+	
+	private Integer storeId;
 
     public String getEmail() {
         return email;
@@ -26,5 +28,13 @@ public class LoginRequest {
     public void setPassword(String password) {
         this.password = password;
     }
+
+	public Integer getStoreId() {
+		return storeId;
+	}
+
+	public void setStoreId(Integer storeId) {
+		this.storeId = storeId;
+	}
 
 }

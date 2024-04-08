@@ -17,9 +17,9 @@ import jakarta.transaction.Transactional;
 public interface CustomersRepository  extends JpaRepository<CustomerEntity, Integer>{
 	
 	
-	@Query(value = "SELECT * FROM Customers WHERE customer_email = :email", nativeQuery = true)
-	Optional<CustomerEntity> findCustomerByEmail(
-			@Param("email") String email);
+	@Query(value = "SELECT * FROM Customers WHERE customer_email = :email and store_id=:storeId", nativeQuery = true)
+	Optional<CustomerEntity> findCustomerByEmailAndStoreId(
+			@Param("email") String email,@Param("storeId") Integer storeId);
 	
 	
 	@Query(value = "SELECT COUNT(*) FROM Customers WHERE customer_email = :email", nativeQuery = true)
@@ -29,6 +29,9 @@ public interface CustomersRepository  extends JpaRepository<CustomerEntity, Inte
 	
 	@Query(value="select current_timestamp",nativeQuery=true)
 	Timestamp findCurrentTimeStamp();
+	
+	
+	CustomerEntity findByCustomerIdAndStoreId(Integer customerId, Integer storeId);
 	
 	
 	 @Modifying(clearAutomatically = true)

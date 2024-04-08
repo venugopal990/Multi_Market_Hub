@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.multimarkethub.userservice.beans.Admin;
-import com.multimarkethub.userservice.beans.UserDetails;
+import com.multimarkethub.userservice.beans.LoginRequest;
 import com.multimarkethub.userservice.entity.AdminEntity;
 import com.multimarkethub.userservice.exception.NotFoundException;
-import com.multimarkethub.userservice.proxy.OrderServiceProxy;
 import com.multimarkethub.userservice.repository.AdminsRepository;
 
 @Service
@@ -43,7 +42,7 @@ public class AdminServiceImpl implements UserService {
 	}
 	
 	@Override
-	public List<Admin> getUsers(Integer id) throws NotFoundException  {
+	public List<Admin> getUsers(Integer id,Integer storeId) throws NotFoundException  {
 		List<AdminEntity> adminEntityList = new ArrayList<>() ;
 		if(id == null) {
 			adminEntityList = adminsRepository.findAll();
@@ -127,18 +126,18 @@ public class AdminServiceImpl implements UserService {
 	}
 
 	@Override
-	public Admin authenticateUser(String email, String password) {
+	public Admin authenticateUser(LoginRequest loginRequest) {
 		
-		Optional<AdminEntity> adminEntityOptional =  adminsRepository.findAdminByEmail(email);
+		Optional<AdminEntity> adminEntityOptional =  adminsRepository.findAdminByEmail(loginRequest.getEmail());
 		if(!adminEntityOptional.isEmpty()) {
 			AdminEntity adminEntity= adminEntityOptional.get();
-			if(passwordService.authenticateUser(password, adminEntity.getAdminPassword())) {
+			if(passwordService.authenticateUser(loginRequest.getPassword(), adminEntity.getAdminPassword())) {
 				return covertAdminEntityToAdmin(adminEntity);
 			}else {
 				return null;
 			}
 		}else {
-			throw new NotFoundException("No admin found with the email address: " + email);
+			throw new NotFoundException("No admin found with the email address: " + loginRequest.getEmail());
 		}
 	}
 

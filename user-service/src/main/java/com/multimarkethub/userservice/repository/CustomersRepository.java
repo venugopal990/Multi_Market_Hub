@@ -22,9 +22,9 @@ public interface CustomersRepository  extends JpaRepository<CustomerEntity, Inte
 			@Param("email") String email,@Param("storeId") Integer storeId);
 	
 	
-	@Query(value = "SELECT COUNT(*) FROM Customers WHERE customer_email = :email", nativeQuery = true)
+	@Query(value = "SELECT COUNT(*) FROM Customers WHERE customer_email = :email and store_id=:storeId", nativeQuery = true)
 	Long countCustomerByEmail(
-			@Param("email") String email);
+			@Param("email") String email,@Param("storeId") Integer storeId);
 		
 	
 	@Query(value="select current_timestamp",nativeQuery=true)

@@ -1,16 +1,18 @@
 package com.multimarkethub.orderservice.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.Body;
 import com.amazonaws.services.simpleemail.model.Content;
 import com.amazonaws.services.simpleemail.model.Destination;
+import com.amazonaws.services.simpleemail.model.GetIdentityVerificationAttributesRequest;
+import com.amazonaws.services.simpleemail.model.GetIdentityVerificationAttributesResult;
 import com.amazonaws.services.simpleemail.model.ListIdentitiesRequest;
 import com.amazonaws.services.simpleemail.model.ListIdentitiesResult;
 import com.amazonaws.services.simpleemail.model.Message;
@@ -79,19 +81,32 @@ public class EmailServiceimpl implements EmailService {
 	
 	
 	private List<String> getAwsVerifiedEmails() {
+		List<String> verifiedEmails = new ArrayList<>();
         ListIdentitiesRequest listIdentitiesRequest = new ListIdentitiesRequest();
 		listIdentitiesRequest.setIdentityType("EmailAddress");
         ListIdentitiesResult result = amazonSimpleEmailService.listIdentities(listIdentitiesRequest);
-        userServiceProxy.updateVerifiedEmail(result.getIdentities());
-        return result.getIdentities();
+        for (String identity : result.getIdentities()) {
+            GetIdentityVerificationAttributesRequest verificationAttributesRequest =
+                new GetIdentityVerificationAttributesRequest().withIdentities(identity);
+            GetIdentityVerificationAttributesResult verificationAttributesResult =
+                amazonSimpleEmailService.getIdentityVerificationAttributes(verificationAttributesRequest);
+            
+            // Check if the email is verified
+            if (verificationAttributesResult.getVerificationAttributes().get(identity).getVerificationStatus().equals("Success")) {
+                verifiedEmails.add(identity);
+            }
+        }
+        userServiceProxy.updateVerifiedEmail(verifiedEmails);
+        return verifiedEmails;
+        
+        
+
 	}
 	
 	
-	@Scheduled(cron = "0 0 * * * *")
 	@Override
 	public List<String> getVerifiedEmails() {
 		List<String> emailList = getAwsVerifiedEmails();
-        userServiceProxy.updateVerifiedEmail(emailList);
         return emailList;
 	}
 

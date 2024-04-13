@@ -72,7 +72,7 @@ public class CustomerServiceImpl implements UserService {
 
 	@Override
 	public Object createUser(Object customer) {
-		if(customersRepository.countCustomerByEmail(((Customer)customer).getEmail())== 0) {
+		if(customersRepository.countCustomerByEmail(((Customer)customer).getEmail(),((Customer)customer).getStoreId())== 0) {
 			CustomerEntity  customerEntity = covertCustomerToCustomerEntity((Customer)customer);
 			Timestamp timeStamp = customersRepository.findCurrentTimeStamp();
 			customerEntity.setCustomerCreatedAt(timeStamp);

@@ -97,12 +97,12 @@ public class StoreServiceImpl implements StoreService{
 	
 	
 	public StoreEntity covertStoreToStoreEntity(Store store) {
-		  return new StoreEntity(store.getName(),store.getAddress());
+		  return new StoreEntity(store.getName(),store.getAddress(),store.getStoreImageUrl());
 	}
 	
 
 	public Store covertStoreEntityToStore(StoreEntity storeEntity) {
-		return new Store(storeEntity.getStoreId(),storeEntity.getStoreName(),storeEntity.getStoreAddress(),storeEntity.getStoreDomain(),storeEntity.getStoreCreatedAt(),storeEntity.getStoreUpdatedAt());
+		return new Store(storeEntity.getStoreId(),storeEntity.getStoreName(),storeEntity.getStoreAddress(),storeEntity.getStoreDomain(),storeEntity.getStoreImageUrl(),storeEntity.getStoreCreatedAt(),storeEntity.getStoreUpdatedAt());
 	}
 	
 	

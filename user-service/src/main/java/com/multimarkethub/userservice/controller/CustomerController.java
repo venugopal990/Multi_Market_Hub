@@ -37,8 +37,7 @@ public class CustomerController {
 
 	@PostMapping("/customers")
 	@ResponseStatus(code = HttpStatus.CREATED)
-	public Customer createCustomer(@Valid @RequestBody(required = true) Customer customer,@RequestParam(required = true) Integer storeId) {
-		customer.setStoreId(storeId);
+	public Customer createCustomer(@Valid @RequestBody(required = true) Customer customer) {
 		return (Customer) customerServices.createUser(customer);
 	}
 	
@@ -78,7 +77,6 @@ public class CustomerController {
 	}
 
 	/**
-	 * TODO Add StoreId in the condition
 	 * @param id
 	 * @param storeId
 	 * @return

@@ -17,6 +17,9 @@ public class Store {
 	@NotBlank @NotNull @Size(min=3)
 	private String address;
 	
+	@NotBlank @NotNull
+	private String storeImageUrl;
+	
 	private String domainResource;
 	
 	private Timestamp created_at;
@@ -43,6 +46,12 @@ public class Store {
 	}
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	public String getStoreImageUrl() {
+		return storeImageUrl;
+	}
+	public void setStoreImageUrl(String storeImageUrl) {
+		this.storeImageUrl = storeImageUrl;
 	}
 	public String getDomainResource() {
 		return domainResource;
@@ -71,12 +80,13 @@ public class Store {
 	
 
 	public Store(Integer id, @NotBlank @NotNull @Size(min = 3) String name,
-			@NotBlank @NotNull @Size(min = 3) String address, String domainResource, Timestamp created_at, Timestamp updated_date) {
+			@NotBlank @NotNull @Size(min = 3) String address, String domainResource,@NotBlank @NotNull String storeImageUrl, Timestamp created_at, Timestamp updated_date) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.address = address;
 		this.domainResource = domainResource;
+		this.storeImageUrl = storeImageUrl;
 		this.created_at = created_at;
 		this.updated_date = updated_date;
 	}

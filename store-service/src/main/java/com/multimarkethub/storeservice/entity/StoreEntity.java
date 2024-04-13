@@ -28,6 +28,9 @@ public class StoreEntity {
 
 	@Column(name="store_domain")
 	private String storeDomain;
+	
+	@Column(name="store_image_url")
+	private String storeImageUrl;
 
 	@Column(name="store_address")
 	private String storeAddress;
@@ -64,6 +67,14 @@ public class StoreEntity {
 		this.storeDomain = storeDomain;
 	}
 
+	public String getStoreImageUrl() {
+		return storeImageUrl;
+	}
+
+	public void setStoreImageUrl(String storeImageUrl) {
+		this.storeImageUrl = storeImageUrl;
+	}
+
 	public String getStoreAddress() {
 		return storeAddress;
 	}
@@ -88,10 +99,11 @@ public class StoreEntity {
 		this.storeUpdatedAt = storeUpdatedAt;
 	}
 
-	public StoreEntity(String storeName, String storeAddress) {
+	public StoreEntity(String storeName, String storeAddress, String storeImageUrl) {
 		super();
 		this.storeName = storeName;
 		this.storeAddress = storeAddress;
+		this.storeImageUrl = storeImageUrl;
 	}
 
 	public StoreEntity() {

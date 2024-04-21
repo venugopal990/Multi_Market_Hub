@@ -34,8 +34,13 @@ public class CustomerServiceImpl implements UserService {
 	public List<Customer> getUsers(Integer id,Integer storeId) throws NotFoundException {
 		List<CustomerEntity> customerEntityList = new ArrayList<>();
 		orderServiceProxy.verifiedEmails();
-		if(id == null) {
+		if(id == null && storeId == null) {
 			customerEntityList = customersRepository.findAll();
+			if(customerEntityList.isEmpty()) {
+				throw new NotFoundException("No Customer found. The requested operation cannot be completed.");
+			}
+		}else if(id == null) {
+			customerEntityList = customersRepository.findByStoreId(storeId);
 			if(customerEntityList.isEmpty()) {
 				throw new NotFoundException("No Customer found. The requested operation cannot be completed.");
 			}

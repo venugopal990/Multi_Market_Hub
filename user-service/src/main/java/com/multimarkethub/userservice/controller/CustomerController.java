@@ -50,8 +50,8 @@ public class CustomerController {
 
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers")
-	public List<Customer> getCustomers() {
-		return (List<Customer>) customerServices.getUsers(null,null);
+	public List<Customer> getCustomers(@RequestParam(required = true) Integer storeId) {
+		return (List<Customer>) customerServices.getUsers(null,storeId);
 	}
 
 	/**

@@ -10,6 +10,7 @@ public class Orders {
 	private Double orderTotalAmount;
 	private String orderStatus;
 	private String orderDeliveryStatus;
+	private Customer customer;
 	private List<OrderedProduct> OrderedProductList;
 	private PaymentDetails paymentDetails;
 	
@@ -43,6 +44,12 @@ public class Orders {
 	}
 	public void setOrderDeliveryStatus(String orderDeliveryStatus) {
 		this.orderDeliveryStatus = orderDeliveryStatus;
+	}
+	public Customer getCustomer() {
+		return customer;
+	}
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
 	}
 	public List<OrderedProduct> getOrderedProductList() {
 		return OrderedProductList;

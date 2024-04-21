@@ -33,6 +33,8 @@ public interface CustomersRepository  extends JpaRepository<CustomerEntity, Inte
 	
 	CustomerEntity findByCustomerIdAndStoreId(Integer customerId, Integer storeId);
 	
+	List<CustomerEntity> findByStoreId(Integer storeId);
+	
 	
 	 @Modifying(clearAutomatically = true)
 	 @Transactional

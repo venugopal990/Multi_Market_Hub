@@ -36,7 +36,7 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders")
-	public List<Orders> getOrders(@RequestParam(required = true) Integer storeId, @RequestParam(required = true) Integer customerId, @RequestParam(defaultValue = "0") Integer orderId) {
+	public List<Orders> getOrders(@RequestParam(required = true) Integer storeId, @RequestParam(defaultValue = "0") Integer customerId, @RequestParam(defaultValue = "0") Integer orderId) {
 		
 		return orderService.getOrders(storeId, customerId,orderId);
 		

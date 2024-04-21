@@ -77,8 +77,8 @@ MultiMarketHub can be deployed in various environments, and the following techno
 
 
 ## Customers API's (USER-SERVICE)
-- **GET /customers** - retrieves a list of all users
-- **GET /customers/{id}?storeId=** - retrieves a specific users by ID
+- **GET /customers?storeId=** - retrieves a list of all users based on store id
+- **GET /customers/{id}?storeId=** - retrieves a specific users by ID based on store id
 - **POST /customers** - creates a new users (admin)
 - **POST /customers?storeId=** - creates a new users (customer) based on store id
 - **PUT /customers/{id}** - updates an existing users by ID

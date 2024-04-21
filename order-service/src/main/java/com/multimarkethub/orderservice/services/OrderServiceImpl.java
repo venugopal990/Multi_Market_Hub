@@ -153,12 +153,18 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public List<Orders> getOrders(Integer storeId, Integer customerId, Integer orderId) {
 		List<OrdersEntity> ordersEntityList;
-		if(orderId == 0)
+		
+		if(customerId == 0 && orderId == 0)
+			ordersEntityList = ordersRepository.findByStoreId(storeId);
+		else if(orderId == 0)
 			ordersEntityList = ordersRepository.findByStoreIdAndCustomerId(storeId, customerId);
 		else
 			ordersEntityList = ordersRepository.findByStoreIdAndCustomerIdAndOrderId(storeId, customerId,orderId);
 		List<Orders> ordersList = new ArrayList<>();
 		if(ordersEntityList!=null) {
+			List<Customer> customerList = userServiceProxy.getCustomers(storeId);
+			HashMap<Integer,Customer> customermap =  convertCustomerToMap(customerList);
+			
 			for(OrdersEntity ordersEntity: ordersEntityList) {
 				Orders orders = new Orders();
 				orders.setOrderId(ordersEntity.getOrderId());
@@ -183,6 +189,10 @@ public class OrderServiceImpl implements OrderService {
 					orderedProductList.add(orderedProduct);
 				}
 				orders.setOrderedProductList(orderedProductList);
+				
+				if(customermap.get(ordersEntity.getCustomerId()) != null) {
+					orders.setCustomer(customermap.get(ordersEntity.getCustomerId()));
+				}
 				ordersList.add(orders);
 			}
 
@@ -191,6 +201,14 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return ordersList;
 
+	}
+	
+	private HashMap<Integer,Customer> convertCustomerToMap(List<Customer> customerList){
+		HashMap<Integer,Customer> customermap =  new HashMap<>();
+		for(Customer customer : customerList) {
+			customermap.put(customer.getId(),customer);
+		}
+		return customermap;
 	}
 
 	@Override

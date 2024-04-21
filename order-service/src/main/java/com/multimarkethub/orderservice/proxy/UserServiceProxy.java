@@ -22,5 +22,8 @@ public interface UserServiceProxy {
 	
 	@GetMapping("/customers/{id}")
 	public List<Customer> getCustomers(@PathVariable Integer id,@RequestParam(required = true) Integer storeId);
+	
+	@GetMapping("/customers")
+	public List<Customer> getCustomers(@RequestParam(required = true) Integer storeId);
 
 }

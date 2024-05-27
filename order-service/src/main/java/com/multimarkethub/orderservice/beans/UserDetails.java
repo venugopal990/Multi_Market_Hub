@@ -1,5 +1,6 @@
 package com.multimarkethub.orderservice.beans;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -8,7 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class UserDetails {
+public class UserDetails implements Serializable{
 	
 	private Integer id;
 	@NotBlank @NotNull @Size(min=3)

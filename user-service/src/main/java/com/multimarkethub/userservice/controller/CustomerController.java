@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +52,7 @@ public class CustomerController {
 
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers")
+	@Cacheable(value = "customersCache", key="'storeId-' + #storeId")
 	public List<Customer> getCustomers(@RequestParam(required = true) Integer storeId) {
 		return (List<Customer>) customerServices.getUsers(null,storeId);
 	}
@@ -61,6 +64,7 @@ public class CustomerController {
 	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers/{id}")
+	@Cacheable(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
 	public List<Customer> getCustomers(@PathVariable Integer id,@RequestParam(required = true) Integer storeId) {
 		return (List<Customer>) customerServices.getUsers(id,storeId);
 	}
@@ -82,6 +86,7 @@ public class CustomerController {
 	 * @return
 	 */
 	@DeleteMapping("/customers/{id}")
+	@CacheEvict(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
 	public String deleteById(@PathVariable(required = true) Integer id, @RequestParam(required = true) Integer storeId) {
 		return customerServices.deleteUserById(id);
 	}

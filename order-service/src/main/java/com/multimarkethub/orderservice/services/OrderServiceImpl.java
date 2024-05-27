@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -151,19 +154,26 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	//@Cacheable(value = "orders", key="'storeId-'+ #storeId +'-customerId-' +#customerId+ '-orderId-' + #orderId")
 	public List<Orders> getOrders(Integer storeId, Integer customerId, Integer orderId) {
 		List<OrdersEntity> ordersEntityList;
+		List<Customer> customerList = null;
 		
-		if(customerId == 0 && orderId == 0)
+		if(customerId == 0 && orderId == 0) {
 			ordersEntityList = ordersRepository.findByStoreId(storeId);
-		else if(orderId == 0)
+			customerList = userServiceProxy.getCustomers(storeId);
+		}else if(orderId == 0) {
 			ordersEntityList = ordersRepository.findByStoreIdAndCustomerId(storeId, customerId);
-		else
+			customerList =  userServiceProxy.getCustomers(customerId, storeId);
+		}else {
 			ordersEntityList = ordersRepository.findByStoreIdAndCustomerIdAndOrderId(storeId, customerId,orderId);
+			customerList = userServiceProxy.getCustomers(storeId);
+		}
 		List<Orders> ordersList = new ArrayList<>();
 		if(ordersEntityList!=null) {
-			List<Customer> customerList = userServiceProxy.getCustomers(storeId);
+			
 			HashMap<Integer,Customer> customermap =  convertCustomerToMap(customerList);
+			
 			
 			for(OrdersEntity ordersEntity: ordersEntityList) {
 				Orders orders = new Orders();
@@ -189,7 +199,7 @@ public class OrderServiceImpl implements OrderService {
 					orderedProductList.add(orderedProduct);
 				}
 				orders.setOrderedProductList(orderedProductList);
-				
+
 				if(customermap.get(ordersEntity.getCustomerId()) != null) {
 					orders.setCustomer(customermap.get(ordersEntity.getCustomerId()));
 				}
@@ -210,8 +220,11 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return customermap;
 	}
+	
+
 
 	@Override
+	//@CacheEvict(value = "orders", key="'storeId-'+ #storeId +'-customerId-' +#customerId+ '-orderId-' + #orderId")
 	public List<Orders> updateOrder(Integer storeId, Integer customerId, Integer orderId, Integer deliveryStatusId) {
 		ordersRepository.updateDeliveryStatus(orderId, deliveryStatusId, storeId, customerId);
 		if(deliveryStatusId == 4) {

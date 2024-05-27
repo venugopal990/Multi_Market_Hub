@@ -1,7 +1,8 @@
 package com.multimarkethub.productservice.beans;
 
+import java.io.Serializable;
 
-public class Unit {
+public class Unit implements Serializable{
 	
 	
 	private Integer unitId;

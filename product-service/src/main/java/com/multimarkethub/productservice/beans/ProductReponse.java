@@ -1,8 +1,9 @@
 package com.multimarkethub.productservice.beans;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class ProductReponse {
+public class ProductReponse implements Serializable{
 	
 	private Integer productId;
 	
@@ -15,6 +16,8 @@ public class ProductReponse {
 	private Integer productStockQuantity;
 
 	private String categoryName;
+	
+	private Integer categoryId;
 
 	private String unitName;
 
@@ -74,6 +77,14 @@ public class ProductReponse {
 		this.categoryName = categoryName;
 	}
 
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
+
 	public String getUnit() {
 		return unitName;
 	}
@@ -116,7 +127,7 @@ public class ProductReponse {
 
 	public ProductReponse(Integer productId, String productName, String productDescription, Double productPrice,
 			Integer productStockQuantity, String categoryName, String unitName, Integer storeId, String productImageUrl,
-			Timestamp createdDate, Timestamp updatedDate) {
+			Timestamp createdDate, Timestamp updatedDate,Integer categoryId) {
 		super();
 		this.productId = productId;
 		this.productName = productName;
@@ -124,6 +135,7 @@ public class ProductReponse {
 		this.productPrice = productPrice;
 		this.productStockQuantity = productStockQuantity;
 		this.categoryName = categoryName;
+		this.categoryId = categoryId;
 		this.unitName = unitName;
 		this.storeId = storeId;
 		this.productImageUrl = productImageUrl;

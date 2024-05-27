@@ -1,8 +1,9 @@
 package com.multimarkethub.orderservice.beans;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Orders {
+public class Orders implements Serializable {
 	
 	private Integer orderId;
 	private String orderDateAndTime;

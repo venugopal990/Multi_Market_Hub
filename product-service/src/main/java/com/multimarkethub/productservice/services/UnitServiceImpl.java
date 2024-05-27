@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.multimarkethub.productservice.beans.Unit;
@@ -24,6 +25,7 @@ public class UnitServiceImpl implements UnitService{
 		this.unitsRepository =  unitsRepository;
 	}
 
+	@Cacheable(value = "units", key = "'unitId-' + #unitId", condition = "#unitId != null")
 	@Override
 	public List<Unit> getUnits(Integer unitId)  {
 		List<UnitsEntity> unitsEntityList = new ArrayList<UnitsEntity>();
@@ -44,7 +46,7 @@ public class UnitServiceImpl implements UnitService{
 		}
 	}
 	
-	
+
 	private List<Unit> mapToUnitsBean(List<UnitsEntity> unitsEntityList) {
 		
 		List<Unit> unitList =  new ArrayList<>();

@@ -1,6 +1,8 @@
 package com.multimarkethub.orderservice.beans;
 
-public class PaymentDetails {
+import java.io.Serializable;
+
+public class PaymentDetails implements Serializable{
 	
 	private Integer paymentId;
 	private String paymentDate;

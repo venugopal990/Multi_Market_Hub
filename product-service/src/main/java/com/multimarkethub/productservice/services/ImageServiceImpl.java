@@ -31,9 +31,12 @@ public class ImageServiceImpl  implements ImageService{
         try {
             String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
             String key = "images/" + fileName;
+            // Determine the content type
+            String contentType = file.getContentType();
             PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                     .bucket(bucketName)
                     .key(key)
+                    .contentType(contentType)
                     .build();
 
             s3Client.putObject(putObjectRequest, RequestBody.fromBytes(file.getBytes()));

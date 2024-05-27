@@ -3,6 +3,8 @@ package com.multimarkethub.productservice.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,6 +41,7 @@ public class ProductController {
 	}
 	
 	
+	@CacheEvict(value = "products", key ="'storeId-' + #storeId")
 	@PostMapping("/stores/{storeId}/products")
 	@ResponseStatus(code = HttpStatus.CREATED)
 	public void createProduct(@PathVariable Integer storeId, @Valid @RequestBody(required = true)ProductRequest productRequest) {
@@ -51,17 +54,20 @@ public class ProductController {
 		productService.createDummyProduct(storeId, productRequestList);
 	}
 	
-	
+	@Cacheable(value = "products", key ="'storeId-' + #storeId")
 	@GetMapping("/stores/{storeId}/products")
 	public List<ProductReponse> getProducts(@PathVariable Integer storeId) {
 		return productService.getProducts(storeId, null);
 	}
 	
+	@Cacheable(value = "products", key ="'storeId-' + #storeId + '-productId-' +#productId")
 	@GetMapping("/stores/{storeId}/products/{productId}")
 	public List<ProductReponse> getProducts(@PathVariable Integer storeId, @PathVariable Integer productId) {
 		return productService.getProducts(storeId, productId);
 	}
 	
+	
+	@Cacheable(value = "productsSearch", key = "'storeId-'+ #storeId + '-productName-' + #productName")
 	@GetMapping("/stores/{storeId}/products/search/{productName}")
 	public List<ProductReponse> searchProducts(@PathVariable Integer storeId,@PathVariable String productName) {
 		return productService.searchProducts(storeId, productName);

@@ -1,6 +1,8 @@
 package com.multimarkethub.orderservice.beans;
 
-public class OrderedProduct {
+import java.io.Serializable;
+
+public class OrderedProduct implements Serializable {
 	
 	private Integer productId;
 	private String productName;

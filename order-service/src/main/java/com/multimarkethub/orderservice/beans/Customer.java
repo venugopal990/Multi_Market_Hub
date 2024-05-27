@@ -1,8 +1,9 @@
 package com.multimarkethub.orderservice.beans;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
-public class Customer extends UserDetails{
+public class Customer extends UserDetails implements Serializable{
 
 	public Customer(Integer id, String firstName, String lastName, String email, String address, String phoneNumber,
 			Integer storeId, boolean isEmailIsVerified, Timestamp createdDate, Timestamp updatedDate) {

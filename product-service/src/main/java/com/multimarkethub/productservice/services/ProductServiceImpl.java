@@ -79,7 +79,7 @@ public class ProductServiceImpl implements ProductService{
 			productReponsesList.add(new ProductReponse(productsEntity.getProductId(), productsEntity.getProductName(), productsEntity.getProductDescription(), 
 					productsEntity.getProductPrice(), productsEntity.getProductStockQuantity(), categoryService.getCategoryId(productsEntity.getCategoryId()).getCategoryName(),
 					unitService.getUnits(productsEntity.getUnitId()).get(0).getUnitAbbreviation(), 
-					productsEntity.getStoreId(), productsEntity.getProductImageUrl(), productsEntity.getProductCreatedAt(), productsEntity.getProductUpdatedAt()));
+					productsEntity.getStoreId(), productsEntity.getProductImageUrl(), productsEntity.getProductCreatedAt(), productsEntity.getProductUpdatedAt(), productsEntity.getCategoryId()));
 		}
 		return productReponsesList;
 	}

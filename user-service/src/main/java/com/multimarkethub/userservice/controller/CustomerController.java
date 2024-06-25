@@ -64,7 +64,7 @@ public class CustomerController {
 	 */
 	@SuppressWarnings("unchecked")
 	@GetMapping("/customers/{id}")
-	@Cacheable(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
+	//@Cacheable(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
 	public List<Customer> getCustomers(@PathVariable Integer id,@RequestParam(required = true) Integer storeId) {
 		return (List<Customer>) customerServices.getUsers(id,storeId);
 	}
@@ -86,7 +86,7 @@ public class CustomerController {
 	 * @return
 	 */
 	@DeleteMapping("/customers/{id}")
-	@CacheEvict(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
+	//@CacheEvict(value = "customersCache", key = "'storeId-' + #storeId + '-customerId-' + #id")
 	public String deleteById(@PathVariable(required = true) Integer id, @RequestParam(required = true) Integer storeId) {
 		return customerServices.deleteUserById(id);
 	}

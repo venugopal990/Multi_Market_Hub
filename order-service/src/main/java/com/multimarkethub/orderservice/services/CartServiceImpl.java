@@ -28,13 +28,16 @@ public class CartServiceImpl implements CartService{
 	private final CartRepository cartRepository;
 	private final ProductServiceProxy productServiceProxy;
 	private final UserServiceProxy userServiceProxy;
+	private final EmailService emailService;
 	
 	@Autowired
-	public CartServiceImpl(CartitemsRepository cartitemsRepository,CartRepository cartRepository,ProductServiceProxy productServiceProxy,UserServiceProxy userServiceProxy) {
+	public CartServiceImpl(CartitemsRepository cartitemsRepository,CartRepository cartRepository,ProductServiceProxy productServiceProxy,
+			UserServiceProxy userServiceProxy,EmailService emailService) {
 		this.cartitemsRepository =  cartitemsRepository;
 		this.cartRepository =  cartRepository;
 		this.productServiceProxy =  productServiceProxy;
 		this.userServiceProxy = userServiceProxy;
+		this.emailService = emailService;
 	}
 	public AddToCartResponse addItemToCart(AddToCartRequest addToCartRequest) {
 		List<Customer> customerList;
@@ -123,6 +126,7 @@ public class CartServiceImpl implements CartService{
 				productReponse.setProductCartQuantity(cartitemsEntity.getQuantity());
 				productReponseList.add(productReponse);
 			}
+			emailService.getVerifiedEmails();
 			return new Cart(cartitemsEntityList.size(), getTotalPriceOfTheCart(cartitemsEntityList), productReponseList);
 		}else {
 			throw new NotFoundException("No products found in the cart.");

@@ -3,6 +3,7 @@ package com.multimarkethub.orderservice.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.mail.MailSender;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -13,10 +14,9 @@ import com.amazonaws.services.simpleemail.AmazonSimpleEmailServiceClientBuilder;
 import io.awspring.cloud.ses.SimpleEmailServiceMailSender;
 
 
-
-
-
 @Configuration
+//@PropertySource("file:D:\\Multi_market_Hub_Files\\config\\aws.properties")
+@PropertySource("file:/app/config/aws.properties")
 public class AwsSesConfiguration {
 	
 	    @Value("${aws.accessKeyId}")

@@ -103,3 +103,11 @@ MultiMarketHub can be deployed in various environments, and the following techno
 - **GET /verifiedEmailsFromAws** - Get Verified Emails using AWS Simple Email Service 
 - **POST /products/images/upload** - Upload product images to an AWS S3 bucket
 
+## Live URLs
+
+**Customer Portal:**  
+- [McDonald's](https://shopcustomerportal.netlify.app/mcdonald288792)  
+- [Saregama](https://shopcustomerportal.netlify.app/saregama128110)  
+
+**Admin Portal:**  
+- [MultiMarketHub Admin](https://multi-admin-portal.netlify.app/)

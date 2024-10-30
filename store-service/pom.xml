@@ -64,6 +64,12 @@
 		    <artifactId>micrometer-observation</artifactId>
 		</dependency>
 		
+		<dependency>
+		   <groupId>io.micrometer</groupId>
+		   <artifactId>micrometer-registry-prometheus</artifactId>
+		   <scope>runtime</scope>
+ 		</dependency>
+		
 		<!-- OPTION 1: Open Telemetry as Bridge (RECOMMENDED) -->
 		<!-- Open Telemetry 
 		    - Simplified Observability (metrics, logs, and traces) -->
